@@ -1,5 +1,13 @@
 # Nolita Pizza - Website Thương Mại Điện Tử
 
+git init
+git add .
+git commit -m "Update: Thêm mới... "
+git remote add origin <repository-url>
+git push origin main
+
+
+
 Website thương mại điện tử bán Pizza với phong cách nhà hàng cao cấp, lấy cảm hứng từ nhà hàng Pizza phong cách New York.
 
 ## 🚀 Tính năng

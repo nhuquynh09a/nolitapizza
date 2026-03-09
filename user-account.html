@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>User Account - Nolita Pizza</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="css/fontawesome/css/all.min.css">
+  <!-- Site CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Toast thông báo (không dùng alert) -->
+  <div id="toastNotify" class="toast-notify" aria-live="polite"></div>
+  <!-- Popup đăng xuất đặt đầu body để luôn căn giữa viewport -->
+  <div id="logoutConfirmModal" class="modal modal--logout" style="display: none;">
+    <div class="modal-content modal-content--logout">
+      <div class="modal-header">
+        <h2>Xác nhận đăng xuất</h2>
+        <button type="button" class="modal-close" id="logoutModalClose" aria-label="Đóng">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-logout-text">Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?</p>
+      </div>
+      <div class="modal-footer modal-footer--logout">
+        <button type="button" class="btn btn-outline btn-modal-action" id="logoutModalCancel">Hủy</button>
+        <button type="button" class="btn btn-primary btn-modal-action" id="logoutModalConfirm">Xác nhận đăng xuất</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup xác nhận hủy đơn (có ô nhập lý do, không dùng confirm()) -->
+  <div id="cancelOrderModal" class="modal modal--logout" style="display: none;">
+    <div class="modal-content modal-content--logout">
+      <div class="modal-header">
+        <h2>Xác nhận hủy đơn</h2>
+        <button type="button" class="modal-close" id="cancelOrderModalClose" aria-label="Đóng">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-logout-text">Bạn có chắc chắn muốn hủy đơn hàng này? Vui lòng nhập lý do hủy đơn.</p>
+        <div class="form-group" style="margin-top: 16px;">
+          <label for="cancelOrderReason" class="form-label">Lý do hủy đơn <span style="color:#ff7a00;">*</span></label>
+          <textarea id="cancelOrderReason" rows="3" placeholder="Nhập lý do hủy đơn..." class="form-input" style="width:100%; resize:vertical; min-height: 80px;"></textarea>
+          <span class="form-error" id="cancelOrderReasonError"></span>
+        </div>
+      </div>
+      <div class="modal-footer modal-footer--logout">
+        <button type="button" class="btn btn-outline btn-modal-action" id="cancelOrderModalCancel">Đóng</button>
+        <button type="button" class="btn btn-primary btn-modal-action" id="cancelOrderModalConfirm">Xác nhận hủy đơn</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Details Modal (đặt đầu body để căn giữa viewport, không bị đè) -->
+  <div id="orderModal" class="modal modal--order" style="display: none;">
+    <div class="modal-content modal-content--order">
+      <div class="modal-header">
+        <h2>Chi tiết đơn hàng</h2>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="order-detail-grid">
+          <div class="order-detail-item">
+            <div class="order-detail-label">Mã đơn</div>
+            <div class="order-detail-value" id="modalOrderId">—</div>
+          </div>
+          <div class="order-detail-item">
+            <div class="order-detail-label">Ngày đặt</div>
+            <div class="order-detail-value" id="modalOrderDate">—</div>
+          </div>
+          <div class="order-detail-item">
+            <div class="order-detail-label">Trạng thái</div>
+            <div class="order-detail-value" id="modalOrderStatus">—</div>
+          </div>
+          <div class="order-detail-item">
+            <div class="order-detail-label">Tổng tiền</div>
+            <div class="order-detail-value" id="modalOrderTotal">—</div>
+          </div>
+        </div>
+
+        <div id="modalOrderCancelReason" style="display:none; margin-top:16px; padding:12px; background:rgba(198,40,40,0.12); border-radius:8px; border-left:4px solid #c62828;">
+          <strong style="color:#c62828;">Lý do hủy đơn:</strong> <span id="modalOrderCancelReasonText"></span>
+        </div>
+
+        <div style="margin-top: 30px; border-top: 1px solid rgba(255,122,0,0.2); padding-top: 20px;">
+          <h3 style="color: #ff7a00; margin-bottom: 15px;">Sản phẩm</h3>
+          <div id="modalOrderItems"></div>
+        </div>
+
+        <div style="margin-top: 25px; border-top: 1px solid rgba(255,122,0,0.2); padding-top: 20px;">
+          <h3 style="color: #ff7a00; margin-bottom: 15px;">Thông tin giao hàng</h3>
+          <div class="order-delivery-info">
+            <div><strong>Người nhận:</strong> <span id="modalOrderName">-</span></div>
+            <div><strong>Số điện thoại:</strong> <span id="modalOrderPhone">-</span></div>
+            <div><strong>Địa chỉ:</strong> <span id="modalOrderAddr">-</span></div>
+            <div id="modalOrderEmail" style="display:none;"><strong>Email:</strong> <span id="modalOrderEmailValue">-</span></div>
+            <div id="modalOrderNote" style="display:none;"><strong>Ghi chú:</strong> <span id="modalOrderNoteValue">-</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="header" id="header">
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <a href="index.html">
+            <img src="images/logonolita.png" alt="Nolita Pizza Logo" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'100\' cy=\'100\' r=\'95\' fill=\'%23111111\' stroke=\'%23ff7a00\' stroke-width=\'4\'/%3E%3Cpath d=\'M 100 30 L 170 100 L 100 100 Z\' fill=\'%23ff7a00\' opacity=\'0.9\'/%3E%3Cpath d=\'M 100 30 L 100 100 L 30 100 Z\' fill=\'%23ff7a00\' opacity=\'0.7\'/%3E%3Ccircle cx=\'120\' cy=\'80\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'90\' cy=\'70\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'110\' cy=\'100\' r=\'8\' fill=\'%238B0000\'/%3E%3Ctext x=\'100\' y=\'150\' font-family=\'Arial\' font-size=\'60\' font-weight=\'bold\' fill=\'%23ff7a00\' text-anchor=\'middle\'%3EN%3C/text%3E%3C/svg%3E'>
+            <span class="logo-text">NOLITA <span class="logo-subtext">PIZZA</span></span>
+          </a>
+        </div>
+        <nav class="nav" id="nav">
+          <ul class="nav-list">
+            <li><a href="index.html" class="nav-link">Trang chủ</a></li>
+            <li><a href="menu.html" class="nav-link">Món ăn</a></li>
+            <li><a href="order.html" class="nav-link">Đặt Món</a></li>
+            <li><a href="contact.html" class="nav-link">Liên hệ</a></li>
+            <li><a href="about.html" class="nav-link">Về Chúng Tôi</a></li>
+            <li><a href="reviews.html" class="nav-link">Đánh giá</a></li>
+            <li><a href="user-account.html" class="nav-link active">Tài Khoản</a></li>
+          </ul>
+        </nav>
+        <div class="header-actions">
+          <a href="auth.html" class="btn-account" id="auth-buttons" aria-label="Đăng nhập"><i class="fas fa-user-circle"></i></a>
+          <a href="user-account.html" class="btn-account" id="user-icon" style="display:none" aria-label="Tài khoản"><i class="fas fa-user-circle"></i></a>
+          <a href="order.html" class="btn-cart" id="cartBtn" aria-label="Giỏ hàng"><i class="fas fa-shopping-cart"></i><span class="cart-count" id="hdrCartCount">0</span></a>
+          <button class="menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Account Page -->
+  <div class="account-page">
+    <div class="container">
+      <div class="account-wrapper">
+        <aside class="account-sidebar card">
+      <div class="account-user-card">
+        <div class="account-avatar" id="sideAvatar"></div>
+        <div class="account-user-info">
+          <h3 id="sideName" class="account-user-name"></h3>
+          <div class="account-user-email muted" id="sideEmail"></div>
+        </div>
+      </div>
+      <ul class="account-menu">
+        <li><button class="account-menu-btn active" data-tab="profile"><i class="fas fa-user"></i> Thông tin cá nhân</button></li>
+        <li><button class="account-menu-btn" data-tab="orders"><i class="fas fa-box"></i> Đơn hàng của tôi</button></li>
+        <li><button class="account-menu-btn" data-tab="reviews"><i class="fas fa-star"></i> Đánh giá của tôi</button></li>
+        <li><button class="account-menu-btn" data-tab="password"><i class="fas fa-lock"></i> Đổi mật khẩu</button></li>
+        <li><button class="account-menu-btn" data-tab="logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</button></li>
+      </ul>
+    </aside>
+
+    <section class="account-content card">
+      <div id="panelProfile" class="account-tab active">
+        <h2>Thông tin cá nhân</h2>
+        <div class="account-form-grid">
+          <div class="account-form-group">
+            <label>Họ tên</label>
+            <input id="f_name" type="text" disabled>
+          </div>
+          <div class="account-form-group">
+            <label>Email</label>
+            <input id="f_email" type="email" disabled>
+          </div>
+          <div class="account-form-group">
+            <label>Số điện thoại</label>
+            <input id="f_phone" type="text" disabled>
+          </div>
+          <div class="account-form-group">
+            <label>Địa chỉ</label>
+            <input id="f_address" type="text" disabled>
+          </div>
+          <div class="account-form-group">
+            <label>Ngày tạo tài khoản</label>
+            <input id="f_created" type="text" disabled>
+          </div>
+        </div>
+        <div class="account-form-actions">
+          <button id="editProfileBtn" class="btn btn-outline">Chỉnh sửa</button>
+          <button id="saveProfileBtn" class="btn btn-primary" disabled>Lưu</button>
+        </div>
+      </div>
+
+      <div id="panelOrders" class="account-tab">
+        <h2>Đơn hàng của tôi</h2>
+        <table class="account-table">
+          <thead>
+            <tr>
+              <th>Mã đơn</th>
+              <th>Ngày đặt</th>
+              <th>Tổng tiền</th>
+              <th>Trạng thái</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="ordersTbody"></tbody>
+        </table>
+      </div>
+
+      <div id="panelReviews" class="account-tab">
+        <h2>Đánh giá của tôi</h2>
+        <div class="account-form-group" style="margin-bottom:1rem;">
+          <label>Gửi đánh giá tổng</label>
+          <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+            <div>
+              <label style="font-size:0.85rem;color:#999;">Số sao</label>
+              <select id="reviewStars" style="padding:8px 12px;border-radius:8px;min-width:80px;">
+                <option value="5">5 sao</option>
+                <option value="4">4 sao</option>
+                <option value="3">3 sao</option>
+                <option value="2">2 sao</option>
+                <option value="1">1 sao</option>
+              </select>
+            </div>
+            <div style="flex:1;min-width:200px;">
+              <label style="font-size:0.85rem;color:#999;">Nội dung</label>
+              <input type="text" id="reviewContent" placeholder="Viết đánh giá của bạn..." style="width:100%;padding:8px 12px;border-radius:8px;box-sizing:border-box;" />
+            </div>
+            <button type="button" id="submitReviewBtn" class="btn btn-primary">Gửi đánh giá</button>
+          </div>
+        </div>
+        <div id="reviewsList"></div>
+      </div>
+
+      <div id="panelPassword" class="account-tab">
+        <h2>Đổi mật khẩu</h2>
+        <div class="account-form-grid" style="grid-template-columns: 1fr;">
+          <div class="account-form-group">
+            <label>Mật khẩu cũ</label>
+            <input id="oldPwd" type="password">
+          </div>
+          <div class="account-form-group">
+            <label>Mật khẩu mới</label>
+            <input id="newPwd" type="password">
+          </div>
+          <div class="account-form-group">
+            <label>Xác nhận mật khẩu mới</label>
+            <input id="confirmPwd" type="password">
+          </div>
+        </div>
+        <div class="account-form-actions">
+          <button id="changePwdBtn" class="btn btn-primary">Cập nhật</button>
+          <div id="pwdMsg" style="margin-left: 12px; color: #bfbfbf; font-size: 0.9rem;"></div>
+        </div>
+      </div>
+
+      <div id="panelLogout" class="account-tab">
+        <h2>Đăng xuất</h2>
+        <p style="color: #cccccc; line-height: 1.8;">Bạn có chắc chắn muốn đăng xuất khỏi tài khoản?</p>
+        <div class="account-form-actions">
+          <button id="confirmLogoutBtn" class="btn btn-primary">Xác nhận đăng xuất</button>
+          <a href="index.html" class="btn btn-outline">Quay về trang chủ</a>
+        </div>
+      </div>
+
+    </section>
+      </div>
+    </div>
+  </div>
+
+<!-- Footer -->
+<footer class="footer" id="contact">
+  <div class="container">
+      <div class="footer-content">
+          <div class="footer-column">
+              <div class="footer-logo">
+                  <a href="index.html">
+                      <img src="images/logonolita.png" alt="Nolita Pizza Logo" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'100\' cy=\'100\' r=\'95\' fill=\'%23111111\' stroke=\'%23ff7a00\' stroke-width=\'4\'/%3E%3Cpath d=\'M 100 30 L 170 100 L 100 100 Z\' fill=\'%23ff7a00\' opacity=\'0.9\'/%3E%3Cpath d=\'M 100 30 L 100 100 L 30 100 Z\' fill=\'%23ff7a00\' opacity=\'0.7\'/%3E%3Ccircle cx=\'120\' cy=\'80\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'90\' cy=\'70\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'110\' cy=\'100\' r=\'8\' fill=\'%238B0000\'/%3E%3Ctext x=\'100\' y=\'150\' font-family=\'Arial\' font-size=\'60\' font-weight=\'bold\' fill=\'%23ff7a00\' text-anchor=\'middle\'%3EN%3C/text%3E%3C/svg%3E'">
+                      <span class="logo-text">NOLITA <span class="logo-subtext">PIZZA</span></span>
+                  </a>
+              </div>
+              <p class="footer-description">
+                  Nhà hàng Pizza cao cấp với hương vị New York chính thống. 
+                  Mang đến trải nghiệm ẩm thực Ý đích thực cho thực khách Việt Nam.
+              </p>
+              <nav class="footer-nav">
+                  <ul class="footer-nav-list">
+                      <li><a href="index.html">Trang chủ</a></li>
+                      <li><a href="menu.html">Món ăn</a></li>
+                      <li><a href="order.html">Đặt Món</a></li>
+                      <li><a href="contact.html">Liên hệ</a></li>
+                      <li><a href="about.html">Về Chúng Tôi</a></li>
+                      <li><a href="reviews.html">Đánh giá</a></li>
+                      <li class="auth-nav-item"><a href="auth.html">Đăng ký / Đăng nhập</a></li>
+                  </ul>
+              </nav>
+          </div>
+          <div class="footer-column">
+              <h3 class="footer-title">VỊ TRÍ</h3>
+              <p class="footer-info">
+                  <i class="fas fa-map-marker-alt"></i>
+                  Đông Lợi, Thị xã Bình Minh<br>
+                  Tỉnh Vĩnh Long, Việt Nam
+              </p>
+          </div>
+          <div class="footer-column">
+              <h3 class="footer-title">GIỜ MỞ CỬA</h3>
+              <p class="footer-info">
+                  <i class="fas fa-clock"></i>
+                  Chủ nhật - Thứ tư: 11:00 sáng - 10:00 tối<br>
+                  Thứ năm - Thứ bảy: 11:00 sáng - 11:00 tối
+              </p>
+          </div>
+          <div class="footer-column">
+              <h3 class="footer-title">LIÊN HỆ</h3>
+              <p class="footer-info">
+                  <i class="fas fa-phone"></i>
+                  <a href="tel:0909688688">0909-688-688</a><br>
+                  <i class="fas fa-envelope"></i>
+                  <a href="mailto:quantrinolitapizza@gmail.com">quantrinolitapizza@gmail.com</a>
+              </p>
+              <div class="footer-social">
+                  <a href="#" class="social-link" aria-label="Facebook">
+                      <i class="fab fa-facebook-f"></i>
+                  </a>
+                  <a href="#" class="social-link" aria-label="Instagram">
+                      <i class="fab fa-instagram"></i>
+                  </a>
+                  <a href="#" class="social-link" aria-label="Twitter">
+                      <i class="fab fa-twitter"></i>
+                  </a>
+              </div>
+          </div>
+      </div>
+      <div class="footer-bottom">
+          <p>&copy; 2026 Nolita Pizza. Tất cả quyền được bảo lưu.</p>
+      </div>
+  </div>
+</footer>
+
+
+  <script type="module" src="js/auth.js"></script>
+  <script type="module" src="js/user-account.js"></script>
+</body>
+</html>

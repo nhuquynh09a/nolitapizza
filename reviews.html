@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đánh giá - Nolita Pizza</title>
+    <meta name="description" content="Đánh giá trải nghiệm của bạn tại Nolita Pizza. Chia sẻ ý kiến để chúng tôi phục vụ tốt hơn.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/fontawesome/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="images/logonolita.png" alt="Nolita Pizza" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'40\' height=\'40\'%3E%3Cpath fill=\'%23ff7a00\' d=\'M20 2L24 10 32 12 26 18 27 26 20 22 13 26 14 18 8 12 16 10z\'/%3E%3C/svg%3E'">
+                        <span class="logo-text">NOLITA <span class="logo-subtext">PIZZA</span></span>
+                    </a>
+                </div>
+                <nav class="nav" id="nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Trang chủ</a></li>
+                        <li><a href="menu.html" class="nav-link">Món ăn</a></li>
+                        <li><a href="order.html" class="nav-link">Đặt Món</a></li>
+                        <li><a href="contact.html" class="nav-link">Liên hệ</a></li>
+                        <li><a href="about.html" class="nav-link">Về Chúng Tôi</a></li>
+                        <li><a href="reviews.html" class="nav-link active">Đánh giá</a></li>
+                        <li class="auth-nav-item"><a href="auth.html" class="nav-link">Đăng ký / Đăng nhập</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <a href="auth.html" class="btn-account" id="auth-buttons" aria-label="Đăng nhập"><i class="fas fa-user-circle"></i></a>
+                    <a href="user-account.html" class="btn-account" id="user-icon" style="display:none" aria-label="Tài khoản"><i class="fas fa-user-circle"></i></a>
+                    <a href="order.html" class="btn-cart" aria-label="Giỏ hàng"><i class="fas fa-shopping-cart"></i><span class="cart-count" id="hdrCartCount">0</span></a>
+                    <button class="menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="page-title" id="reviews-banner">
+        <div class="container">
+            <div class="page-title-content" data-aos="fade-up">
+                <h1 class="page-title-heading">Đánh giá Nolita Pizza</h1>
+                <p class="page-title-subtitle">Chia sẻ trải nghiệm của bạn</p>
+                <p class="page-title-description">Ý kiến của bạn giúp chúng tôi cải thiện dịch vụ. Đăng nhập để gửi đánh giá.</p>
+            </div>
+        </div>
+    </section>
+
+    <div id="reviewsToast" class="reviews-toast" aria-live="polite"></div>
+
+    <main class="reviews-main">
+        <div class="container">
+            <div class="reviews-layout">
+                <aside class="reviews-form-wrap" data-aos="fade-right">
+                    <div id="reviewsGuestBlock" class="reviews-guest-block card" style="display:none;">
+                        <p class="reviews-guest-text"><i class="fas fa-info-circle"></i> Bạn cần đăng nhập để viết đánh giá.</p>
+                        <a href="auth.html?returnUrl=reviews.html" class="btn btn-primary btn-large"><i class="fas fa-sign-in-alt"></i> Đăng nhập / Đăng ký</a>
+                    </div>
+                    <div id="reviewsFormCard" class="reviews-form-card card">
+                        <h2 class="reviews-form-title"><i class="fas fa-pen"></i> Viết đánh giá</h2>
+                        <form id="reviewForm" class="reviews-form">
+                            <div class="form-group">
+                                <label for="reviewName" class="form-label">Họ tên <span class="required">*</span></label>
+                                <input type="text" id="reviewName" name="name" class="form-input" placeholder="Nhập họ tên của bạn" required autocomplete="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="reviewEmail" class="form-label">Email</label>
+                                <input type="email" id="reviewEmail" name="email" class="form-input" placeholder="Tự động lấy từ tài khoản" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Đánh giá sao <span class="required">*</span></label>
+                                <div class="reviews-stars" id="reviewStars" role="group" aria-label="Chọn số sao từ 1 đến 5">
+                                    <button type="button" class="reviews-star" data-value="1" aria-label="1 sao" tabindex="0"><i class="far fa-star"></i></button>
+                                    <button type="button" class="reviews-star" data-value="2" aria-label="2 sao" tabindex="0"><i class="far fa-star"></i></button>
+                                    <button type="button" class="reviews-star" data-value="3" aria-label="3 sao" tabindex="0"><i class="far fa-star"></i></button>
+                                    <button type="button" class="reviews-star" data-value="4" aria-label="4 sao" tabindex="0"><i class="far fa-star"></i></button>
+                                    <button type="button" class="reviews-star" data-value="5" aria-label="5 sao" tabindex="0"><i class="far fa-star"></i></button>
+                                </div>
+                                <input type="hidden" id="reviewRatingInput" name="rating" value="0">
+                                <span class="form-error" id="reviewStarsError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="reviewContent" class="form-label">Nội dung đánh giá <span class="required">*</span></label>
+                                <textarea id="reviewContent" name="content" class="form-input form-textarea" rows="5" placeholder="Chia sẻ trải nghiệm của bạn về pizza, dịch vụ, không gian..." maxlength="2000"></textarea>
+                                <span class="form-error" id="reviewContentError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Ảnh đính kèm (tối đa 3)</label>
+                                <input type="file" id="reviewImages" accept="image/*" multiple class="reviews-file-input">
+                                <div class="reviews-preview" id="reviewPreview"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-large reviews-submit" id="reviewSubmitBtn">
+                                <i class="fas fa-paper-plane"></i> Gửi đánh giá
+                            </button>
+                            <button type="button" class="btn btn-outline btn-large reviews-cancel-edit" id="reviewCancelEditBtn" style="display:none;">
+                                <i class="fas fa-times"></i> Hủy sửa
+                            </button>
+                        </form>
+                    </div>
+                </aside>
+
+                <section class="reviews-list-wrap" data-aos="fade-left">
+                    <h2 class="reviews-list-title"><i class="fas fa-comments"></i> Đánh giá từ khách hàng</h2>
+                    <div id="reviewsList" class="reviews-list">
+                        <p class="reviews-loading" id="reviewsLoading">Đang tải đánh giá...</p>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <div id="reviewImageModal" class="reviews-image-modal" style="display:none;" role="dialog" aria-modal="true" aria-label="Xem ảnh">
+        <div class="reviews-image-modal-backdrop"></div>
+        <div class="reviews-image-modal-content">
+            <button type="button" class="reviews-image-modal-close" id="reviewImageModalClose" aria-label="Đóng">&times;</button>
+            <img id="reviewImageModalImg" src="" alt="Ảnh đánh giá">
+        </div>
+    </div>
+
+    <div id="reviewDeleteModal" class="reviews-confirm-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="reviewDeleteModalTitle">
+        <div class="reviews-confirm-backdrop"></div>
+        <div class="reviews-confirm-content">
+            <h3 id="reviewDeleteModalTitle" class="reviews-confirm-title">Xác nhận xóa</h3>
+            <p class="reviews-confirm-message">Bạn có chắc muốn xóa đánh giá này?</p>
+            <div class="reviews-confirm-actions">
+                <button type="button" class="btn btn-outline reviews-confirm-cancel" id="reviewDeleteModalCancel">Hủy</button>
+                <button type="button" class="btn btn-primary reviews-confirm-ok" id="reviewDeleteModalOk">Xóa</button>
+            </div>
+        </div>
+    </div>
+
+      <!-- Footer -->
+    <footer class="footer" id="contact">
+      <div class="container">
+          <div class="footer-content">
+              <div class="footer-column">
+                  <div class="footer-logo">
+                      <a href="index.html">
+                          <img src="images/logonolita.png" alt="Nolita Pizza Logo" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'100\' cy=\'100\' r=\'95\' fill=\'%23111111\' stroke=\'%23ff7a00\' stroke-width=\'4\'/%3E%3Cpath d=\'M 100 30 L 170 100 L 100 100 Z\' fill=\'%23ff7a00\' opacity=\'0.9\'/%3E%3Cpath d=\'M 100 30 L 100 100 L 30 100 Z\' fill=\'%23ff7a00\' opacity=\'0.7\'/%3E%3Ccircle cx=\'120\' cy=\'80\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'90\' cy=\'70\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'110\' cy=\'100\' r=\'8\' fill=\'%238B0000\'/%3E%3Ctext x=\'100\' y=\'150\' font-family=\'Arial\' font-size=\'60\' font-weight=\'bold\' fill=\'%23ff7a00\' text-anchor=\'middle\'%3EN%3C/text%3E%3C/svg%3E'">
+                          <span class="logo-text">NOLITA <span class="logo-subtext">PIZZA</span></span>
+                      </a>
+                  </div>
+                  <p class="footer-description">
+                      Nhà hàng Pizza cao cấp với hương vị New York chính thống. 
+                      Mang đến trải nghiệm ẩm thực Ý đích thực cho thực khách Việt Nam.
+                  </p>
+                  <nav class="footer-nav">
+                      <ul class="footer-nav-list">
+                          <li><a href="index.html">Trang chủ</a></li>
+                          <li><a href="menu.html">Món ăn</a></li>
+                          <li><a href="order.html">Đặt Món</a></li>
+                          <li><a href="contact.html">Liên hệ</a></li>
+                          <li><a href="about.html">Về Chúng Tôi</a></li>
+                          <li><a href="reviews.html">Đánh giá</a></li>
+                          <li class="auth-nav-item"><a href="auth.html">Đăng ký / Đăng nhập</a></li>
+                      </ul>
+                  </nav>
+              </div>
+              <div class="footer-column">
+                  <h3 class="footer-title">VỊ TRÍ</h3>
+                  <p class="footer-info">
+                      <i class="fas fa-map-marker-alt"></i>
+                      Đông Lợi, Thị xã Bình Minh<br>
+                      Tỉnh Vĩnh Long, Việt Nam
+                  </p>
+              </div>
+              <div class="footer-column">
+                  <h3 class="footer-title">GIỜ MỞ CỬA</h3>
+                  <p class="footer-info">
+                      <i class="fas fa-clock"></i>
+                      Chủ nhật - Thứ tư: 11:00 sáng - 10:00 tối<br>
+                      Thứ năm - Thứ bảy: 11:00 sáng - 11:00 tối
+                  </p>
+              </div>
+              <div class="footer-column">
+                  <h3 class="footer-title">LIÊN HỆ</h3>
+                  <p class="footer-info">
+                      <i class="fas fa-phone"></i>
+                      <a href="tel:0909688688">0909-688-688</a><br>
+                      <i class="fas fa-envelope"></i>
+                      <a href="mailto:quantrinolitapizza@gmail.com">quantrinolitapizza@gmail.com</a>
+                  </p>
+                  <div class="footer-social">
+                      <a href="#" class="social-link" aria-label="Facebook">
+                          <i class="fab fa-facebook-f"></i>
+                      </a>
+                      <a href="#" class="social-link" aria-label="Instagram">
+                          <i class="fab fa-instagram"></i>
+                      </a>
+                      <a href="#" class="social-link" aria-label="Twitter">
+                          <i class="fab fa-twitter"></i>
+                      </a>
+                  </div>
+              </div>
+          </div>
+          <div class="footer-bottom">
+              <p>&copy; 2026 Nolita Pizza. Tất cả quyền được bảo lưu.</p>
+          </div>
+      </div>
+  </footer>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js" crossorigin="anonymous"></script>
+    <script src="js/main.js"></script>
+    <script type="module" src="js/auth.js"></script>
+    <script type="module">
+    /* ----- Trang Đánh giá: logic inline, không tạo file js riêng ----- */
+    /* Cấu hình Cloudinary để upload ảnh đính kèm đánh giá (cùng preset với admin) */
+    window.CLOUDINARY_CLOUD_NAME = 'durrqkh9f';
+    window.CLOUDINARY_UPLOAD_PRESET = 'nolita_unsigned';
+
+    import { auth, onAuthStateChanged, getUserProfile, db, ref, onValue, saveReview, updateReview, deleteReview } from './js/firebase.js';
+    const $ = s => document.querySelector(s);
+    let currentUser = null, userProfile = null, isAdmin = false, selectedRating = 0, selectedFiles = [];
+    let reviewsListData = [];
+    let editingReviewId = null;
+    let pendingDeleteId = null;
+
+    function showToast(msg, type) {
+      const el = document.getElementById('reviewsToast');
+      if (!el) return;
+      el.textContent = msg;
+      el.className = 'reviews-toast reviews-toast--' + (type || 'success');
+      el.classList.add('reviews-toast--visible');
+      clearTimeout(showToast._tid);
+      showToast._tid = setTimeout(() => el.classList.remove('reviews-toast--visible'), 3000);
+    }
+
+    async function uploadImagesToCloudinary(files) {
+      const cloudName = window.CLOUDINARY_CLOUD_NAME || '';
+      const preset = window.CLOUDINARY_UPLOAD_PRESET || '';
+      if (!cloudName || !preset || !files.length) return [];
+      const urls = [];
+      for (let i = 0; i < Math.min(files.length, 3); i++) {
+        const fd = new FormData();
+        fd.append('file', files[i]);
+        fd.append('upload_preset', preset);
+        const res = await fetch('https://api.cloudinary.com/v1_1/' + cloudName + '/image/upload', { method: 'POST', body: fd });
+        if (!res.ok) throw new Error('Upload ảnh thất bại');
+        const data = await res.json();
+        if (data.secure_url) urls.push(data.secure_url);
+      }
+      return urls;
+    }
+
+    function subscribeReviews() {
+      const container = document.getElementById('reviewsList');
+      const loading = document.getElementById('reviewsLoading');
+      try {
+        const revRef = ref(db, 'reviews');
+        onValue(revRef, (snap) => {
+          const data = snap.val();
+          const list = !data || typeof data !== 'object' ? [] : Object.entries(data).map(([id, v]) => ({ ...v, id }));
+          const active = list.filter(r => (r.status || 'active') === 'active').sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+          renderReviewsList(active);
+        }, (err) => {
+          if (loading) loading.style.display = 'none';
+          if (container) container.innerHTML = '<p class="reviews-empty reviews-error">Không thể tải đánh giá. Kiểm tra kết nối Firebase.</p>';
+          console.error('Firebase onValue error:', err);
+        });
+      } catch (err) {
+        if (loading) loading.style.display = 'none';
+        if (container) container.innerHTML = '<p class="reviews-empty reviews-error">Lỗi kết nối Firebase. Vui lòng tải lại trang.</p>';
+        console.error('subscribeReviews error:', err);
+      }
+    }
+
+    function escapeHtml(s) { return (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+    function toImagesArray(val) {
+      if (Array.isArray(val)) return val.filter(Boolean);
+      if (val && typeof val === 'object') return Object.keys(val).sort((a, b) => Number(a) - Number(b)).map(k => val[k]).filter(Boolean);
+      return [];
+    }
+
+    function isValidImageUrl(url) {
+      if (!url || typeof url !== 'string') return false;
+      const t = url.trim();
+      return t.startsWith('http://') || t.startsWith('https://');
+    }
+
+    function renderReviewsList(list) {
+      const container = document.getElementById('reviewsList');
+      const loading = document.getElementById('reviewsLoading');
+      if (!container) return;
+      if (loading) loading.style.display = 'none';
+      if (!list.length) {
+        container.innerHTML = '<p class="reviews-empty">Chưa có đánh giá nào. Hãy là người đầu tiên!</p>';
+        return;
+      }
+      const uid = currentUser ? currentUser.uid : '';
+      reviewsListData = list;
+      container.innerHTML = list.map(r => {
+        const name = r.name || r.user_name || 'Khách';
+        const rating = r.rating ?? r.stars ?? 0;
+        const content = escapeHtml(r.content || '');
+        const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('vi-VN') : '—';
+        const images = toImagesArray(r.images).filter(isValidImageUrl);
+        const canEdit = uid && (r.uid === uid || r.user_id === uid);
+        const canDelete = uid && (isAdmin || r.uid === uid || r.user_id === uid);
+        const avatarText = (String(name).trim().split(/\s+/)[0] || 'K').charAt(0).toUpperCase();
+        let imgsHtml = '';
+        if (images.length) imgsHtml = '<div class="reviews-card-images">' + images.map(url => '<button type="button" class="reviews-card-img" data-url="' + escapeHtml(url) + '" aria-label="Xem ảnh"><img src="' + escapeHtml(url) + '" alt="Ảnh đánh giá" loading="lazy" referrerPolicy="no-referrer"></button>').join('') + '</div>';
+        let actions = '';
+        if (canEdit || canDelete) {
+          actions = '<div class="reviews-card-actions">';
+          if (canEdit) actions += '<button type="button" class="btn btn-sm btn-outline reviews-edit-btn" data-id="' + escapeHtml(r.id) + '">Sửa</button>';
+          if (canDelete) actions += '<button type="button" class="btn btn-sm btn-outline reviews-delete-btn" data-id="' + escapeHtml(r.id) + '">Xóa</button>';
+          actions += '</div>';
+        }
+        const starsHtml = [1,2,3,4,5].map(s => s <= rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>').join('');
+        return '<div class="reviews-card card" data-id="' + escapeHtml(r.id) + '"><div class="reviews-card-header"><div class="reviews-card-avatar">' + avatarText + '</div><div class="reviews-card-meta"><span class="reviews-card-name">' + escapeHtml(name) + '</span><div class="reviews-card-stars">' + starsHtml + '</div><span class="reviews-card-date">' + dateStr + '</span></div>' + actions + '</div><div class="reviews-card-body">' + content + '</div>' + imgsHtml + '</div>';
+      }).join('');
+      container.querySelectorAll('.reviews-card-img').forEach(btn => { btn.addEventListener('click', () => { const m = document.getElementById('reviewImageModal'); const img = document.getElementById('reviewImageModalImg'); if (m && img) { img.src = btn.dataset.url; m.style.display = 'flex'; } }); });
+      container.querySelectorAll('.reviews-delete-btn').forEach(btn => {
+        btn.addEventListener('click', () => { showDeleteConfirmModal(btn.dataset.id); });
+      });
+      container.querySelectorAll('.reviews-edit-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const review = reviewsListData.find(r => r.id === btn.dataset.id);
+          if (review) setEditMode(review);
+        });
+      });
+    }
+
+    function initModalImage() {
+      const modal = document.getElementById('reviewImageModal');
+      const closeBtn = document.getElementById('reviewImageModalClose');
+      if (closeBtn) closeBtn.addEventListener('click', () => { if (modal) modal.style.display = 'none'; });
+      if (modal) modal.addEventListener('click', e => { if (e.target === modal || e.target.classList.contains('reviews-image-modal-backdrop')) modal.style.display = 'none'; });
+    }
+
+    function showDeleteConfirmModal(reviewId) {
+      pendingDeleteId = reviewId;
+      const modal = document.getElementById('reviewDeleteModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function hideDeleteConfirmModal() {
+      pendingDeleteId = null;
+      const modal = document.getElementById('reviewDeleteModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function initDeleteConfirmModal() {
+      const modal = document.getElementById('reviewDeleteModal');
+      const cancelBtn = document.getElementById('reviewDeleteModalCancel');
+      const okBtn = document.getElementById('reviewDeleteModalOk');
+      const backdrop = modal && modal.querySelector('.reviews-confirm-backdrop');
+      if (cancelBtn) cancelBtn.addEventListener('click', hideDeleteConfirmModal);
+      if (okBtn) okBtn.addEventListener('click', async () => {
+        if (!pendingDeleteId) { hideDeleteConfirmModal(); return; }
+        const id = pendingDeleteId;
+        hideDeleteConfirmModal();
+        try {
+          await deleteReview(id);
+          showToast('Đã xóa đánh giá.');
+        } catch (e) {
+          showToast('Lỗi: ' + (e?.message || e), 'error');
+        }
+      });
+      if (backdrop) backdrop.addEventListener('click', hideDeleteConfirmModal);
+      if (modal) modal.addEventListener('click', e => { if (e.target === modal) hideDeleteConfirmModal(); });
+    }
+
+    function setEditMode(review) {
+      if (!review) return;
+      editingReviewId = review.id;
+      document.getElementById('reviewName').value = (review.name || review.user_name || '').trim();
+      document.getElementById('reviewContent').value = (review.content || '').trim();
+      const rating = review.rating ?? review.stars ?? 0;
+      selectedRating = rating;
+      const wrap = document.getElementById('reviewStars');
+      if (wrap) {
+        wrap.querySelectorAll('.reviews-star').forEach((b, i) => {
+          const icon = b.querySelector('i');
+          if (icon) icon.className = (i + 1) <= rating ? 'fas fa-star' : 'far fa-star';
+        });
+      }
+      const hiddenInput = document.getElementById('reviewRatingInput');
+      if (hiddenInput) hiddenInput.value = rating;
+      const submitBtn = document.getElementById('reviewSubmitBtn');
+      const cancelBtn = document.getElementById('reviewCancelEditBtn');
+      if (submitBtn) { submitBtn.innerHTML = '<i class="fas fa-save"></i> Cập nhật'; submitBtn.dataset.mode = 'edit'; }
+      if (cancelBtn) cancelBtn.style.display = 'inline-flex';
+      document.getElementById('reviewStarsError').textContent = '';
+      document.getElementById('reviewContentError').textContent = '';
+    }
+
+    function clearEditMode() {
+      editingReviewId = null;
+      const submitBtn = document.getElementById('reviewSubmitBtn');
+      const cancelBtn = document.getElementById('reviewCancelEditBtn');
+      if (submitBtn) { submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Gửi đánh giá'; delete submitBtn.dataset.mode; }
+      if (cancelBtn) cancelBtn.style.display = 'none';
+      selectedRating = 0;
+      selectedFiles = [];
+      const wrap = document.getElementById('reviewStars');
+      if (wrap) wrap.querySelectorAll('.reviews-star').forEach(b => { const icon = b.querySelector('i'); if (icon) icon.className = 'far fa-star'; });
+      document.getElementById('reviewRatingInput').value = '0';
+      document.getElementById('reviewPreview').innerHTML = '';
+      document.getElementById('reviewImages').value = '';
+    }
+
+    function initStars() {
+      const wrap = document.getElementById('reviewStars');
+      const hiddenInput = document.getElementById('reviewRatingInput');
+      if (!wrap) return;
+      function setStarsVisual(value) {
+        wrap.querySelectorAll('.reviews-star').forEach((b, i) => {
+          const icon = b.querySelector('i');
+          if (icon) icon.className = (i + 1) <= value ? 'fas fa-star' : 'far fa-star';
+        });
+        if (hiddenInput) hiddenInput.value = value;
+      }
+      wrap.addEventListener('click', (e) => {
+        const btn = e.target.closest('.reviews-star');
+        if (!btn) return;
+        e.preventDefault();
+        selectedRating = parseInt(btn.dataset.value, 10);
+        setStarsVisual(selectedRating);
+        document.getElementById('reviewStarsError').textContent = '';
+      });
+      wrap.addEventListener('keydown', (e) => {
+        const btn = e.target.closest('.reviews-star');
+        if (!btn || (e.key !== 'Enter' && e.key !== ' ')) return;
+        e.preventDefault();
+        selectedRating = parseInt(btn.dataset.value, 10);
+        setStarsVisual(selectedRating);
+        document.getElementById('reviewStarsError').textContent = '';
+      });
+    }
+
+    function initImagePreview() {
+      const input = document.getElementById('reviewImages');
+      const preview = document.getElementById('reviewPreview');
+      if (!input || !preview) return;
+      input.addEventListener('change', () => {
+        selectedFiles = Array.from(input.files).slice(0, 3);
+        preview.innerHTML = selectedFiles.map((f, i) => '<div class="reviews-preview-item"><img src="' + URL.createObjectURL(f) + '" alt="Preview"><button type="button" class="reviews-preview-remove" data-i="' + i + '">&times;</button></div>').join('');
+        preview.querySelectorAll('.reviews-preview-remove').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const i = parseInt(btn.dataset.i, 10);
+            selectedFiles = selectedFiles.filter((_, j) => j !== i);
+            const dt = new DataTransfer();
+            selectedFiles.forEach(f => dt.items.add(f));
+            input.files = dt.files;
+            initImagePreview();
+          });
+        });
+      });
+    }
+
+    function initForm() {
+      const form = document.getElementById('reviewForm');
+      if (!form) return;
+      const cancelEditBtn = document.getElementById('reviewCancelEditBtn');
+      if (cancelEditBtn) cancelEditBtn.addEventListener('click', () => { form.reset(); document.getElementById('reviewName').value = ''; document.getElementById('reviewEmail').value = currentUser ? currentUser.email || '' : ''; clearEditMode(); });
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const content = document.getElementById('reviewContent').value.trim();
+        const errStars = document.getElementById('reviewStarsError');
+        const errContent = document.getElementById('reviewContentError');
+        errStars.textContent = '';
+        errContent.textContent = '';
+        if (selectedRating < 1) { errStars.textContent = 'Vui lòng chọn số sao.'; return; }
+        if (!content) { errContent.textContent = 'Vui lòng nhập nội dung đánh giá.'; return; }
+        const name = document.getElementById('reviewName').value.trim();
+        if (!name) { document.getElementById('reviewName').focus(); showToast('Vui lòng nhập họ tên.', 'error'); return; }
+        const btn = document.getElementById('reviewSubmitBtn');
+        if (btn) btn.disabled = true;
+        try {
+          if (editingReviewId) {
+            let imageUrls = toImagesArray((reviewsListData.find(r => r.id === editingReviewId) || {}).images);
+            if (selectedFiles.length && window.CLOUDINARY_CLOUD_NAME && window.CLOUDINARY_UPLOAD_PRESET) imageUrls = await uploadImagesToCloudinary(selectedFiles);
+            await updateReview(editingReviewId, { name, content, rating: selectedRating, images: imageUrls });
+            showToast('Đã sửa thành công.');
+            form.reset();
+            document.getElementById('reviewEmail').value = currentUser ? currentUser.email || '' : '';
+            clearEditMode();
+          } else {
+            let imageUrls = [];
+            if (selectedFiles.length && (window.CLOUDINARY_CLOUD_NAME && window.CLOUDINARY_UPLOAD_PRESET)) imageUrls = await uploadImagesToCloudinary(selectedFiles);
+            const result = await saveReview({ uid: currentUser.uid, name, email: currentUser.email || '', rating: selectedRating, content, images: imageUrls, status: 'active' });
+            if (result && result.success) {
+              showToast('Đã gửi đánh giá. Cảm ơn bạn!');
+              form.reset();
+              selectedRating = 0;
+              selectedFiles = [];
+              document.getElementById('reviewPreview').innerHTML = '';
+              document.getElementById('reviewStars').querySelectorAll('.reviews-star').forEach(b => { const icon = b.querySelector('i'); if (icon) icon.className = 'far fa-star'; });
+              document.getElementById('reviewRatingInput').value = '0';
+            } else showToast((result && result.error) || 'Gửi thất bại.', 'error');
+          }
+        } catch (err) { showToast('Lỗi: ' + (err?.message || err), 'error'); }
+        finally { if (btn) btn.disabled = false; }
+      });
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user || null;
+      if (!user) {
+        userProfile = null;
+        isAdmin = false;
+        const guestBlock = document.getElementById('reviewsGuestBlock');
+        const formCard = document.getElementById('reviewsFormCard');
+        if (guestBlock) guestBlock.style.display = 'block';
+        if (formCard) formCard.style.display = 'none';
+        subscribeReviews();
+        return;
+      }
+      userProfile = await getUserProfile(user.uid).catch(() => null);
+      isAdmin = userProfile && userProfile.role === 'admin';
+      document.getElementById('reviewEmail').value = user.email || '';
+      document.getElementById('reviewName').value = '';
+      const guestBlock = document.getElementById('reviewsGuestBlock');
+      const formCard = document.getElementById('reviewsFormCard');
+      if (guestBlock) guestBlock.style.display = 'none';
+      if (formCard) formCard.style.display = 'block';
+      subscribeReviews();
+    });
+
+    function init() { initModalImage(); initDeleteConfirmModal(); initStars(); initImagePreview(); initForm(); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+    </script>
+</body>
+</html>

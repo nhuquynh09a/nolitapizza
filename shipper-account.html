@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shipper - Nolita Pizza</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="kitchen-body">
+  <div class="kitchen-shell">
+    <aside class="kitchen-sidebar">
+      <div class="kitchen-logo">
+        <img src="images/logonolita.png" alt="Nolita Pizza Logo" class="logo-img">
+        <div class="kitchen-logo-text">
+          <span class="kitchen-logo-title">Nolita Shipper</span>
+          <span class="kitchen-logo-subtitle">Giao hàng</span>
+        </div>
+      </div>
+      <nav class="kitchen-nav">
+        <a href="#orders" class="kitchen-nav-link kitchen-nav-link--active">
+          <i class="fas fa-box-open" aria-hidden="true"></i>
+          <span>Đơn cần giao</span>
+        </a>
+        <a href="#completed" class="kitchen-nav-link">
+          <i class="fas fa-check-circle" aria-hidden="true"></i>
+          <span>Đơn đã giao xong</span>
+        </a>
+      </nav>
+      <div class="kitchen-sidebar-footer">
+        <button type="button" id="kitchenLogoutBtn" class="btn btn-outline kitchen-logout-btn">
+          <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+          Đăng xuất
+        </button>
+      </div>
+    </aside>
+
+    <main class="kitchen-main">
+      <header class="kitchen-header">
+        <div>
+          <h1 class="kitchen-header-title">Quản lý giao hàng</h1>
+          <p class="kitchen-header-subtitle">
+            Chỉ hiển thị đơn admin đã bấm "Gửi ship". Nhận đơn, cập nhật trạng thái đang giao và đã giao xong theo thời gian thực.
+          </p>
+        </div>
+      </header>
+
+      <section class="kitchen-section" id="orders">
+        <div id="kitchenLoading" class="kitchen-loading">
+          <div class="kitchen-loading-spinner"></div>
+          <p>Đang tải đơn giao hàng...</p>
+        </div>
+        <div id="kitchenEmpty" class="kitchen-empty" style="display:none;">
+          <i class="fas fa-inbox"></i>
+          <p>Hiện chưa có đơn nào cần giao.</p>
+        </div>
+        <div id="kitchenCards" class="kitchen-cards"></div>
+      </section>
+
+      <section class="kitchen-section" id="completed" style="display:none;">
+        <div id="kitchenCompletedEmpty" class="kitchen-empty" style="display:none;">
+          <i class="fas fa-clipboard-check"></i>
+          <p>Chưa có đơn nào được giao xong.</p>
+        </div>
+        <div id="kitchenCompletedCards" class="kitchen-cards"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div id="kitchenToast" class="kitchen-toast" aria-live="polite"></div>
+
+  <!-- Confirm Modal -->
+  <div id="kitchenModalBackdrop" class="kitchen-modal-backdrop" aria-hidden="true">
+    <div class="kitchen-modal">
+      <div class="kitchen-modal-header">
+        <h3 id="kitchenModalTitle">Xác nhận</h3>
+        <button type="button" id="kitchenModalClose" class="kitchen-modal-close" aria-label="Đóng">&times;</button>
+      </div>
+      <div id="kitchenModalBody" class="kitchen-modal-body"></div>
+      <div id="kitchenModalFooter" class="kitchen-modal-footer"></div>
+    </div>
+  </div>
+
+  <script type="module" src="js/staff.js"></script>
+</body>
+</html>
+

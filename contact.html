@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liên Hệ - Nolita Pizza</title>
+    <meta name="description" content="Liên hệ với Nolita Pizza. Chúng tôi luôn sẵn sàng phục vụ bạn với những chiếc pizza tuyệt vời nhất.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="css/fontawesome/css/all.min.css">
+    
+    <!-- AOS Animation -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="images/logonolita.png" alt="Nolita Pizza Logo" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'100\' cy=\'100\' r=\'95\' fill=\'%23111111\' stroke=\'%23ff7a00\' stroke-width=\'4\'/%3E%3Cpath d=\'M 100 30 L 170 100 L 100 100 Z\' fill=\'%23ff7a00\' opacity=\'0.9\'/%3E%3Cpath d=\'M 100 30 L 100 100 L 30 100 Z\' fill=\'%23ff7a00\' opacity=\'0.7\'/%3E%3Ccircle cx=\'120\' cy=\'80\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'90\' cy=\'70\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'110\' cy=\'100\' r=\'8\' fill=\'%238B0000\'/%3E%3Ctext x=\'100\' y=\'150\' font-family=\'Arial\' font-size=\'60\' font-weight=\'bold\' fill=\'%23ff7a00\' text-anchor=\'middle\'%3EN%3C/text%3E%3C/svg%3E'">
+                        <span class="logo-text">NOLITA <span class="logo-subtext">PIZZA</span></span>
+                    </a>
+                </div>
+                <nav class="nav" id="nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Trang chủ</a></li>
+                        <li><a href="menu.html" class="nav-link">Món ăn</a></li>
+                        <li><a href="order.html" class="nav-link">Đặt Món</a></li>
+
+                        <li><a href="contact.html" class="nav-link active">Liên hệ</a></li>
+                        <li><a href="about.html" class="nav-link">Về Chúng Tôi</a></li>
+                        <li><a href="reviews.html" class="nav-link">Đánh giá</a></li>
+                        <li class="auth-nav-item"><a href="auth.html" class="nav-link">Đăng ký / Đăng nhập</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <a href="auth.html" class="btn-account" id="auth-buttons" aria-label="Đăng nhập">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                    <a href="user-account.html" class="btn-account" id="user-icon" style="display:none" aria-label="Tài khoản">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                    <a href="order.html" class="btn-cart" aria-label="Giỏ hàng">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                    <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contact Banner -->
+    <section class="contact-banner" id="contact-banner">
+        <div class="contact-banner-overlay"></div>
+        <div class="contact-banner-content" data-aos="fade-up">
+            <h1 class="contact-banner-title">LIÊN HỆ VỚI NOLITA PIZZA</h1>
+            <p class="contact-banner-subtitle">Chúng tôi luôn sẵn sàng lắng nghe bạn</p>
+            <p class="contact-banner-description">
+                Có bất kỳ câu hỏi nào? Liên hệ với chúng tôi ngay hôm nay. 
+                Đội ngũ của chúng tôi sẵn sàng giúp bạn!
+            </p>
+        </div>
+    </section>
+
+    <!-- Contact Info Section -->
+    <section class="contact-info-section">
+        <div class="container">
+            <div class="contact-info-grid">
+                <!-- Address -->
+                <div class="contact-info-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <h3 class="contact-info-title">Địa chỉ</h3>
+                    <p class="contact-info-content">
+                        Đông Lợi, Thị xã Bình Minh<br>
+                        Tỉnh Vĩnh Long, Việt Nam
+                    </p>
+                </div>
+
+                <!-- Phone -->
+                <div class="contact-info-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <h3 class="contact-info-title">Điện thoại</h3>
+                    <p class="contact-info-content">
+                        <a href="tel:0909-688-688">0909-688-688</a><br>
+                        <span style="color: var(--text-gray); font-size: 0.9rem;">Hôm nay: 9:00 - 22:00</span>
+                    </p>
+                </div>
+
+                <!-- Email -->
+                <div class="contact-info-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3 class="contact-info-title">Email</h3>
+                    <p class="contact-info-content">
+                        <a href="mailto:quantrinolitapizza@gmail.com">quantrinolitapizza@gmail.com</a><br>
+                        <span style="color: var(--text-gray); font-size: 0.9rem;">Trả lời trong 24h</span>
+                    </p>
+                </div>
+
+                <!-- Hours -->
+                <div class="contact-info-card" data-aos="fade-up" data-aos-delay="400">
+                    <div class="contact-info-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="contact-info-title">Giờ mở cửa</h3>
+                    <p class="contact-info-content">
+                        Chủ nhật - Thứ tư: 11:00 - 22:00<br>
+                        Thứ năm - Thứ bảy: 11:00 - 23:00<br>
+                        <span style="color: #ff6b6b;">Đóng cửa Thứ hai</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form & Map Section -->
+    <section class="contact-form-section">
+        <div class="container">
+            <div class="contact-form-wrapper">
+                <!-- Contact Form -->
+                <div class="contact-form-container" data-aos="fade-right">
+                    <h2 class="contact-form-title">
+                        <i class="fas fa-comment-dots"></i>
+                        Gửi liên hệ cho chúng tôi
+                    </h2>
+                    <p class="contact-form-subtitle">
+                        Vui lòng điền thông tin bên dưới. Chúng tôi sẽ phản hồi sớm nhất có thể.
+                    </p>
+
+                    <form id="contactForm" class="contact-form">
+                        <!-- Full Name -->
+                        <div class="form-group">
+                            <label for="fullName" class="form-label">
+                                <i class="fas fa-user"></i> Họ và tên *
+                            </label>
+                            <input 
+                                type="text" 
+                                id="fullName" 
+                                name="full_name" 
+                                class="form-input" 
+                                placeholder="Nhập họ và tên của bạn"
+                                required
+                            >
+                            <span class="form-error" id="fullNameError"></span>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="form-group">
+                            <label for="contactEmail" class="form-label">
+                                <i class="fas fa-envelope"></i> Email *
+                            </label>
+                            <input 
+                                type="email" 
+                                id="contactEmail" 
+                                name="email" 
+                                class="form-input" 
+                                placeholder="Nhập email của bạn"
+                                required
+                            >
+                            <span class="form-error" id="emailError"></span>
+                        </div>
+
+                        <!-- Phone (Optional) -->
+                        <div class="form-group">
+                            <label for="contactPhone" class="form-label">
+                                <i class="fas fa-phone"></i> Số điện thoại (tuỳ chọn)
+                            </label>
+                            <input 
+                                type="tel" 
+                                id="contactPhone" 
+                                name="phone" 
+                                class="form-input" 
+                                placeholder="Nhập số điện thoại của bạn"
+                            >
+                        </div>
+
+                        <!-- Subject -->
+                        <div class="form-group">
+                            <label for="contactSubject" class="form-label">
+                                <i class="fas fa-heading"></i> Tiêu đề
+                            </label>
+                            <input 
+                                type="text" 
+                                id="contactSubject" 
+                                name="subject" 
+                                class="form-input" 
+                                placeholder="Tiêu đề liên hệ"
+                            >
+                        </div>
+
+                        <!-- Message -->
+                        <div class="form-group">
+                            <label for="contactMessage" class="form-label">
+                                <i class="fas fa-pen"></i> Lời nhắn *
+                            </label>
+                            <textarea 
+                                id="contactMessage" 
+                                name="message" 
+                                class="form-textarea" 
+                                placeholder="Nhập nội dung liên hệ của bạn..."
+                                rows="6"
+                                required
+                            ></textarea>
+                            <span class="form-error" id="messageError"></span>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary btn-large contact-submit-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Gửi liên hệ
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Google Map -->
+                <div class="contact-map-container" data-aos="fade-left">
+                    <h2 class="contact-map-title">
+                        <i class="fas fa-map"></i>
+                        Vị trí cửa hàng
+                    </h2>
+                    <div class="contact-map">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3024.2219901290355!2d-74.00601592346914!3d40.71728007137101!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c259a87ebbd6db%3A0x88b1b43a51b7db9e!2s88%20Grand%20St%2C%20New%20York%2C%20NY%2010013!5e0!3m2!1svi!2sus!4v1705436400000" 
+                            width="100%" 
+                            height="400" 
+                            style="border:0; border-radius: 10px;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade"
+                        ></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="contact-cta">
+        <div class="container">
+            <div class="contact-cta-content" data-aos="fade-up">
+                <h2 class="contact-cta-title">Hãy ghé thăm chúng tôi ngay hôm nay!</h2>
+                <p class="contact-cta-subtitle">Thưởng thức những chiếc pizza tuyệt vời nhất tại Nolita Pizza</p>
+                <div class="contact-cta-buttons">
+                    <a href="tel:0463395717" class="btn btn-primary btn-large">
+                        <i class="fas fa-phone"></i>
+                        Gọi ngay
+                    </a>
+                    <a href="order.html" class="btn btn-outline btn-large">
+                        <i class="fas fa-shopping-bag"></i>
+                        Đặt hàng online
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <a href="index.html">
+                            <img src="images/logonolita.png" alt="Nolita Pizza Logo" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'100\' cy=\'100\' r=\'95\' fill=\'%23111111\' stroke=\'%23ff7a00\' stroke-width=\'4\'/%3E%3Cpath d=\'M 100 30 L 170 100 L 100 100 Z\' fill=\'%23ff7a00\' opacity=\'0.9\'/%3E%3Cpath d=\'M 100 30 L 100 100 L 30 100 Z\' fill=\'%23ff7a00\' opacity=\'0.7\'/%3E%3Ccircle cx=\'120\' cy=\'80\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'90\' cy=\'70\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'110\' cy=\'100\' r=\'8\' fill=\'%238B0000\'/%3E%3Ctext x=\'100\' y=\'150\' font-family=\'Arial\' font-size=\'60\' font-weight=\'bold\' fill=\'%23ff7a00\' text-anchor=\'middle\'%3EN%3C/text%3E%3C/svg%3E'">
+                            <span class="logo-text">NOLITA <span class="logo-subtext">PIZZA</span></span>
+                        </a>
+                    </div>
+                    <p class="footer-description">
+                        Nhà hàng Pizza cao cấp với hương vị New York chính thống. 
+                        Mang đến trải nghiệm ẩm thực Ý đích thực cho thực khách Việt Nam.
+                    </p>
+                    <nav class="footer-nav">
+                        <ul class="footer-nav-list">
+                            <li><a href="index.html">Trang chủ</a></li>
+                            <li><a href="menu.html">Món ăn</a></li>
+                            <li><a href="order.html">Đặt Món</a></li>
+                            <li><a href="contact.html">Liên hệ</a></li>
+                            <li><a href="about.html">Về Chúng Tôi</a></li>
+                            <li><a href="reviews.html">Đánh giá</a></li>
+                            <li class="auth-nav-item"><a href="auth.html">Đăng ký / Đăng nhập</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="footer-column">
+                    <h3 class="footer-title">VỊ TRÍ</h3>
+                    <p class="footer-info">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Đông Lợi, Thị xã Bình Minh<br>
+                        Tỉnh Vĩnh Long, Việt Nam
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h3 class="footer-title">GIỜ MỞ CỬA</h3>
+                    <p class="footer-info">
+                        <i class="fas fa-clock"></i>
+                        Chủ nhật - Thứ tư: 11:00 sáng - 10:00 tối<br>
+                        Thứ năm - Thứ bảy: 11:00 sáng - 11:00 tối
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h3 class="footer-title">LIÊN HỆ</h3>
+                    <p class="footer-info">
+                        <i class="fas fa-phone"></i>
+                        <a href="tel:0909688688">0909-688-688</a><br>
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:quantrinolitapizza@gmail.com">quantrinolitapizza@gmail.com</a>
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Nolita Pizza. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js" crossorigin="anonymous"></script>
+    
+    <!-- Custom JS -->
+    <script src="js/main.js"></script>
+    <script type="module" src="js/contact.js"></script>
+    <script type="module" src="js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+{
+  "product_details": {
+    "p1": {
+      "d1": {
+        "detail_id": "d1",
+        "product_id": "p1",
+        "size": "S",
+        "size_label": "Nhỏ",
+        "price": 100000,
+        "long_description": "Pizza bò phô mai đế giòn",
+        "ingredients": "Thịt bò, phô mai, sốt cà",
+        "created_at": "2026-02-24",
+        "addons": {
+          "a1": {
+            "addon_id": "a1",
+            "addon_name": "Thêm phô mai",
+            "addon_price": 15000,
+            "addon_calories": 80,
+            "addon_status": "active"
+          },
+          "a2": {
+            "addon_id": "a2",
+            "addon_name": "Xúc xích",
+            "addon_price": 12000,
+            "addon_calories": 70,
+            "addon_status": "active"
+          }
+        }
+      },
+      "d2": {
+        "detail_id": "d2",
+        "product_id": "p1",
+        "size": "M",
+        "size_label": "Vừa",
+        "price": 130000,
+        "created_at": "2026-02-24",
+        "addons": {
+          "a3": {
+            "addon_id": "a3",
+            "addon_name": "Gấp đôi phô mai",
+            "addon_price": 20000,
+            "addon_calories": 120,
+            "addon_status": "active"
+          }
+        }
+      },
+      "d3": {
+        "detail_id": "d3",
+        "product_id": "p1",
+        "size": "L",
+        "size_label": "Lớn",
+        "price": 160000,
+        "created_at": "2026-02-24",
+        "addons": {
+          "a4": {
+            "addon_id": "a4",
+            "addon_name": "Bò xé cay",
+            "addon_price": 25000,
+            "addon_calories": 150,
+            "addon_status": "active"
+          },
+          "a5": {
+            "addon_id": "a5",
+            "addon_name": "Trứng muối",
+            "addon_price": 18000,
+            "addon_calories": 90,
+            "addon_status": "inactive"
+          }
+        }
+      }
+    }
+  }
+}

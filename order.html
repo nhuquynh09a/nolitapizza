@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt Món - Nolita Pizza</title>
+    <meta name="description" content="Xác nhận đơn hàng và thông tin giao hàng. Thanh toán nhanh, an toàn, tiện lợi.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="css/fontawesome/css/all.min.css">
+    
+    <!-- AOS Animation -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="images/logonolita.png" alt="Nolita Pizza Logo" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'100\' cy=\'100\' r=\'95\' fill=\'%23111111\' stroke=\'%23ff7a00\' stroke-width=\'4\'/%3E%3Cpath d=\'M 100 30 L 170 100 L 100 100 Z\' fill=\'%23ff7a00\' opacity=\'0.9\'/%3E%3Cpath d=\'M 100 30 L 100 100 L 30 100 Z\' fill=\'%23ff7a00\' opacity=\'0.7\'/%3E%3Ccircle cx=\'120\' cy=\'80\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'90\' cy=\'70\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'110\' cy=\'100\' r=\'8\' fill=\'%238B0000\'/%3E%3Ctext x=\'100\' y=\'150\' font-family=\'Arial\' font-size=\'60\' font-weight=\'bold\' fill=\'%23ff7a00\' text-anchor=\'middle\'%3EN%3C/text%3E%3C/svg%3E'">
+                        <span class="logo-text">NOLITA <span class="logo-subtext">PIZZA</span></span>
+                    </a>
+                </div>
+                <nav class="nav" id="nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Trang chủ</a></li>
+                        <li><a href="menu.html" class="nav-link">Món ăn</a></li>
+                        <li><a href="order.html" class="nav-link active">Đặt Món</a></li>
+
+                        <li><a href="contact.html" class="nav-link">Liên hệ</a></li>
+                        <li><a href="about.html" class="nav-link">Về Chúng Tôi</a></li>
+                        <li><a href="reviews.html" class="nav-link">Đánh giá</a></li>
+                        <li class="auth-nav-item"><a href="auth.html" class="nav-link">Đăng ký / Đăng nhập</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <a href="auth.html" class="btn-account" id="auth-buttons" aria-label="Đăng nhập">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                    <a href="user-account.html" class="btn-account" id="user-icon" style="display:none" aria-label="Tài khoản">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                    <a href="order.html" class="btn-cart" aria-label="Giỏ hàng">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                    <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Title Section -->
+    <section class="page-title" id="page-order-title">
+        <div class="container">
+            <div class="page-title-content" data-aos="fade-up">
+                <h1 class="page-title-heading">Đặt Món</h1>
+                <p class="page-title-subtitle">Xác nhận đơn hàng và thông tin giao hàng</p>
+                <p class="page-title-description">
+                    Kiểm tra lại đơn hàng của bạn và cung cấp thông tin giao hàng để hoàn tất quá trình đặt hàng.
+                    Chúng tôi sẽ giao hàng nóng hổi đến tay bạn trong thời gian nhanh nhất.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Order Content Section -->
+    <section class="order-section">
+        <div class="container">
+            <div class="order-wrapper">
+                <!-- ====================================
+                     LEFT SIDE: ORDER ITEMS (ORDER_DETAIL)
+                     ==================================== -->
+                <div class="order-left" data-aos="fade-right">
+                    <div class="order-items-container">
+                        <h2 class="order-section-title">
+                            <i class="fas fa-shopping-bag"></i>
+                            Danh sách món đã chọn
+                        </h2>
+
+                        <!-- ORDER ITEMS TABLE/CARDS -->
+                        <div class="order-items-list" id="orderItemsList">
+                            <!-- Items will be rendered here by JavaScript -->
+                        </div>
+
+                        <!-- EMPTY CART MESSAGE -->
+                        <div class="order-empty" id="orderEmpty" style="display: none;">
+                            <i class="fas fa-inbox"></i>
+                            <p>Giỏ hàng của bạn đang trống</p>
+                            <a href="menu.html" class="btn btn-primary">Chọn món ăn</a>
+                        </div>
+
+                        <!-- ORDER SUMMARY -->
+                        <div class="order-summary" id="orderSummary">
+                            <div class="summary-row">
+                                <span class="summary-label">Tổng số món:</span>
+                                <span class="summary-value" id="totalItems">0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span class="summary-label">Tổng Calories:</span>
+                                <span class="summary-value" id="totalCalories">0 cal</span>
+                            </div>
+                            <div class="summary-row summary-total">
+                                <span class="summary-label">Tổng tiền:</span>
+                                <span class="summary-value" id="totalPrice">0đ</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ====================================
+                     RIGHT SIDE: ORDER FORM (ORDER + USER INFO)
+                     ==================================== -->
+                <div class="order-right" data-aos="fade-left">
+                    <div class="order-form-container">
+                        <h2 class="order-section-title">
+                            <i class="fas fa-clipboard-check"></i>
+                            Thông tin đặt hàng
+                        </h2>
+
+                        <form id="orderForm" class="order-form">
+                            <!-- ====== CUSTOMER INFO (USER) ====== -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Thông tin khách hàng</legend>
+
+                                <div class="form-group">
+                                    <label for="customerName" class="form-label">
+                                        <i class="fas fa-user"></i> Họ và tên *
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="customerName" 
+                                        name="name" 
+                                        class="form-input" 
+                                        placeholder="Nhập họ và tên của bạn"
+                                        required
+                                    >
+                                    <span class="form-error" id="nameError"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="customerPhone" class="form-label">
+                                        <i class="fas fa-phone"></i> Số điện thoại *
+                                    </label>
+                                    <input 
+                                        type="tel" 
+                                        id="customerPhone" 
+                                        name="phone" 
+                                        class="form-input" 
+                                        placeholder="Nhập số điện thoại (10 số)"
+                                        pattern="[0-9]{10}"
+                                        required
+                                    >
+                                    <span class="form-error" id="phoneError"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="customerEmail" class="form-label">
+                                        <i class="fas fa-envelope"></i> Email *
+                                    </label>
+                                    <input 
+                                        type="email" 
+                                        id="customerEmail" 
+                                        name="email" 
+                                        class="form-input" 
+                                        placeholder="Nhập email của bạn"
+                                        required
+                                    >
+                                    <span class="form-error" id="emailError"></span>
+                                </div>
+                            </fieldset>
+
+                            <!-- ====== DELIVERY INFO (ORDER) ====== -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Địa chỉ giao hàng</legend>
+
+                                <div class="form-group">
+                                    <label for="deliveryAddress" class="form-label">
+                                        <i class="fas fa-map-marker-alt"></i> Địa chỉ *
+                                    </label>
+                                    <input 
+                                        type="text" 
+                                        id="deliveryAddress" 
+                                        name="delivery_address" 
+                                        class="form-input" 
+                                        placeholder="Nhập địa chỉ giao hàng (Số nhà, tên đường, quận, thành phố)"
+                                        required
+                                    >
+                                    <span class="form-error" id="addressError"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="customerNote" class="form-label">
+                                        <i class="fas fa-sticky-note"></i> Ghi chú (tuỳ chọn)
+                                    </label>
+                                    <textarea 
+                                        id="customerNote" 
+                                        name="note" 
+                                        class="form-textarea" 
+                                        placeholder="Ví dụ: Giao giờ cao điểm, thêm nước chanh..."
+                                        rows="4"
+                                    ></textarea>
+                                </div>
+                            </fieldset>
+
+                            <!-- ====== PAYMENT METHOD ====== -->
+                            <fieldset class="form-fieldset">
+                                <legend class="form-legend">Phương thức thanh toán</legend>
+
+                                <div class="payment-options">
+                                    <label class="payment-option">
+                                        <input 
+                                            type="radio" 
+                                            name="payment_method" 
+                                            value="COD" 
+                                            checked
+                                            class="payment-radio"
+                                        >
+                                        <span class="payment-label">
+                                            <i class="fas fa-money-bill-wave"></i>
+                                            Thanh toán khi nhận hàng (COD)
+                                        </span>
+                                    </label>
+
+                                    <label class="payment-option">
+                                        <input 
+                                            type="radio" 
+                                            name="payment_method" 
+                                            value="ONLINE" 
+                                            class="payment-radio"
+                                        >
+                                        <span class="payment-label">
+                                            <i class="fas fa-credit-card"></i>
+                                            Thanh toán trực tuyến
+                                        </span>
+                                    </label>
+
+                                    
+                                </div>
+                            </fieldset>
+
+                            <!-- ====== SUBMIT BUTTON ====== -->
+                            <div class="form-actions">
+                                <button 
+                                    type="submit" 
+                                    class="btn btn-primary btn-large"
+                                    id="submitOrderBtn"
+                                >
+                                    <i class="fas fa-check-circle"></i>
+                                    Xác nhận đặt hàng
+                                </button>
+                                <a 
+                                    href="menu.html" 
+                                    class="btn btn-outline btn-large"
+                                >
+                                    <i class="fas fa-arrow-left"></i>
+                                    Quay lại chọn thêm
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   <!-- Footer -->
+   <footer class="footer" id="contact">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <a href="index.html">
+                        <img src="images/logonolita.png" alt="Nolita Pizza Logo" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'100\' cy=\'100\' r=\'95\' fill=\'%23111111\' stroke=\'%23ff7a00\' stroke-width=\'4\'/%3E%3Cpath d=\'M 100 30 L 170 100 L 100 100 Z\' fill=\'%23ff7a00\' opacity=\'0.9\'/%3E%3Cpath d=\'M 100 30 L 100 100 L 30 100 Z\' fill=\'%23ff7a00\' opacity=\'0.7\'/%3E%3Ccircle cx=\'120\' cy=\'80\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'90\' cy=\'70\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'110\' cy=\'100\' r=\'8\' fill=\'%238B0000\'/%3E%3Ctext x=\'100\' y=\'150\' font-family=\'Arial\' font-size=\'60\' font-weight=\'bold\' fill=\'%23ff7a00\' text-anchor=\'middle\'%3EN%3C/text%3E%3C/svg%3E'">
+                        <span class="logo-text">NOLITA <span class="logo-subtext">PIZZA</span></span>
+                    </a>
+                </div>
+                <p class="footer-description">
+                    Nhà hàng Pizza cao cấp với hương vị New York chính thống. 
+                    Mang đến trải nghiệm ẩm thực Ý đích thực cho thực khách Việt Nam.
+                </p>
+                <nav class="footer-nav">
+                    <ul class="footer-nav-list">
+                        <li><a href="index.html">Trang chủ</a></li>
+                        <li><a href="menu.html">Món ăn</a></li>
+                        <li><a href="order.html">Đặt Món</a></li>
+                        <li><a href="contact.html">Liên hệ</a></li>
+                        <li><a href="about.html">Về Chúng Tôi</a></li>
+                        <li><a href="reviews.html">Đánh giá</a></li>
+                        <li class="auth-nav-item"><a href="auth.html">Đăng ký / Đăng nhập</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="footer-column">
+                <h3 class="footer-title">VỊ TRÍ</h3>
+                <p class="footer-info">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Đông Lợi, Thị xã Bình Minh<br>
+                    Tỉnh Vĩnh Long, Việt Nam
+                </p>
+            </div>
+            <div class="footer-column">
+                <h3 class="footer-title">GIỜ MỞ CỬA</h3>
+                <p class="footer-info">
+                    <i class="fas fa-clock"></i>
+                    Chủ nhật - Thứ tư: 11:00 sáng - 10:00 tối<br>
+                    Thứ năm - Thứ bảy: 11:00 sáng - 11:00 tối
+                </p>
+            </div>
+            <div class="footer-column">
+                <h3 class="footer-title">LIÊN HỆ</h3>
+                <p class="footer-info">
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:0909688688">0909-688-688</a><br>
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:quantrinolitapizza@gmail.com">quantrinolitapizza@gmail.com</a>
+                </p>
+                <div class="footer-social">
+                    <a href="#" class="social-link" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Nolita Pizza. Tất cả quyền được bảo lưu.</p>
+        </div>
+    </div>
+</footer>
+
+    <!-- Confirm remove item modal -->
+    <div id="orderDeleteBackdrop" class="order-confirm-backdrop" aria-hidden="true">
+        <div class="order-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="orderDeleteTitle">
+            <h3 id="orderDeleteTitle" class="order-confirm-title">Xóa món ăn</h3>
+            <p class="order-confirm-text">Bạn có chắc muốn xóa món ăn này?</p>
+            <div class="order-confirm-actions">
+                <button type="button" id="orderDeleteCancel" class="btn btn-outline">Hủy</button>
+                <button type="button" id="orderDeleteConfirm" class="btn btn-primary">Xóa</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- AOS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js" crossorigin="anonymous"></script>
+    <!-- Custom JS -->
+    <script src="js/main.js"></script>
+    <script type="module" src="js/order.js"></script>
+    <script type="module" src="js/auth.js"></script>
+</body>
+</html>

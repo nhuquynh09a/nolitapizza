@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết món - Nolita Pizza</title>
+    <meta name="description" content="Chi tiết món ăn Nolita Pizza">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="css/fontawesome/css/all.min.css">
+
+    <!-- AOS Animation -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet" crossorigin="anonymous">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="images/logonolita.png" alt="Nolita Pizza Logo" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'100\' cy=\'100\' r=\'95\' fill=\'%23111111\' stroke=\'%23ff7a00\' stroke-width=\'4\'/%3E%3Cpath d=\'M 100 30 L 170 100 L 100 100 Z\' fill=\'%23ff7a00\' opacity=\'0.9\'/%3E%3Cpath d=\'M 100 30 L 100 100 L 30 100 Z\' fill=\'%23ff7a00\' opacity=\'0.7\'/%3E%3Ccircle cx=\'120\' cy=\'80\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'90\' cy=\'70\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'110\' cy=\'100\' r=\'8\' fill=\'%238B0000\'/%3E%3Ctext x=\'100\' y=\'150\' font-family=\'Arial\' font-size=\'60\' font-weight=\'bold\' fill=\'%23ff7a00\' text-anchor=\'middle\'%3EN%3C/text%3E%3C/svg%3E'">
+                        <span class="logo-text">NOLITA <span class="logo-subtext">PIZZA</span></span>
+                    </a>
+                </div>
+                <nav class="nav" id="nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link">Trang chủ</a></li>
+                        <li><a href="menu.html" class="nav-link">Món ăn</a></li>
+                        <li><a href="order.html" class="nav-link">Đặt Món</a></li>
+                        <li><a href="contact.html" class="nav-link">Liên hệ</a></li>
+                        <li><a href="about.html" class="nav-link">Về Chúng Tôi</a></li>
+                        <li><a href="reviews.html" class="nav-link">Đánh giá</a></li>
+                        <li class="auth-nav-item"><a href="auth.html" class="nav-link">Đăng ký / Đăng nhập</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <a href="auth.html" class="btn-account" id="auth-buttons" aria-label="Đăng nhập">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                    <a href="user-account.html" class="btn-account" id="user-icon" style="display:none" aria-label="Tài khoản">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                    <a href="order.html" class="btn-cart" aria-label="Giỏ hàng">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                    <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <section class="breadcrumb-section">
+        <div class="container">
+            <nav class="breadcrumb" data-aos="fade-up">
+                <a href="index.html">Trang chủ</a>
+                <span class="separator">/</span>
+                <a href="menu.html">Thực đơn</a>
+                <span class="separator">/</span>
+                <span class="current" id="breadcrumbProduct">Chi tiết</span>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Product Detail Section -->
+    <section class="product-detail">
+        <div class="container">
+            <div class="product-detail-wrapper">
+                <!-- Left: Product Image -->
+                <div class="product-detail-image-section" data-aos="fade-right">
+                    <div class="product-detail-image-container" id="productImageWrapper">
+                        <!-- Image injected by JS -->
+                    </div>
+                </div>
+
+                <!-- Right: Product Info -->
+                <div class="product-detail-info-section" data-aos="fade-left">
+                    <!-- Product Name & Meta -->
+                    <div class="product-detail-header">
+                        <h1 class="product-detail-name" id="productName">Đang tải...</h1>
+                    </div>
+
+                    <!-- Price & Calories -->
+                    <div class="product-detail-pricing">
+                        <div class="price-box">
+                            <span class="label">Giá</span>
+                            <span class="price" id="productPrice">0đ</span>
+                        </div>
+                        <div class="calories-box">
+                            <span class="label">Năng lượng</span>
+                            <span class="value" id="productCalories">0 cal</span>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="product-detail-description-box">
+                        <p class="product-detail-description" id="productLongDescription"></p>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="divider"></div>
+
+                    <!-- Size Selection -->
+                    <div class="product-detail-section-box">
+                        <h3 class="section-label">
+                            <i class="fas fa-expand"></i> Chọn kích cỡ
+                        </h3>
+                        <div class="size-options-grid" id="sizeOptions"></div>
+                    </div>
+
+                    <!-- Addons Selection -->
+                    <div class="product-detail-section-box">
+                        <h3 class="section-label">
+                            <i class="fas fa-plus-circle"></i> Món thêm
+                        </h3>
+                        <div class="addons-list" id="addonsList"></div>
+                    </div>
+
+                    <!-- Divider -->
+                    <div class="divider"></div>
+
+                    <!-- Total -->
+                    <div class="product-detail-summary">
+                        <div class="summary-row">
+                            <span class="summary-label">Tổng tiền:</span>
+                            <span class="summary-value" id="totalPrice">0đ</span>
+                        </div>
+                        <div class="summary-row">
+                            <span class="summary-label">Tổng calories:</span>
+                            <span class="summary-value" id="totalCalories">0 cal</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="product-detail-actions">
+                        <button id="addToCartBtn" class="btn btn-primary btn-lg">
+                            <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                        </button>
+                        <a href="order.html" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-arrow-right"></i> Đến giỏ hàng
+                        </a>
+                        <a href="menu.html" class="btn btn-outline btn-lg">
+                            <i class="fas fa-arrow-left"></i> Quay lại menu
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+ <!-- Footer -->
+ <footer class="footer" id="contact">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-column">
+                <div class="footer-logo">
+                    <a href="index.html">
+                        <img src="images/logonolita.png" alt="Nolita Pizza Logo" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'100\' cy=\'100\' r=\'95\' fill=\'%23111111\' stroke=\'%23ff7a00\' stroke-width=\'4\'/%3E%3Cpath d=\'M 100 30 L 170 100 L 100 100 Z\' fill=\'%23ff7a00\' opacity=\'0.9\'/%3E%3Cpath d=\'M 100 30 L 100 100 L 30 100 Z\' fill=\'%23ff7a00\' opacity=\'0.7\'/%3E%3Ccircle cx=\'120\' cy=\'80\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'90\' cy=\'70\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'110\' cy=\'100\' r=\'8\' fill=\'%238B0000\'/%3E%3Ctext x=\'100\' y=\'150\' font-family=\'Arial\' font-size=\'60\' font-weight=\'bold\' fill=\'%23ff7a00\' text-anchor=\'middle\'%3EN%3C/text%3E%3C/svg%3E'">
+                        <span class="logo-text">NOLITA <span class="logo-subtext">PIZZA</span></span>
+                    </a>
+                </div>
+                <p class="footer-description">
+                    Nhà hàng Pizza cao cấp với hương vị New York chính thống. 
+                    Mang đến trải nghiệm ẩm thực Ý đích thực cho thực khách Việt Nam.
+                </p>
+                <nav class="footer-nav">
+                    <ul class="footer-nav-list">
+                        <li><a href="index.html">Trang chủ</a></li>
+                        <li><a href="menu.html">Món ăn</a></li>
+                        <li><a href="order.html">Đặt Món</a></li>
+                        <li><a href="contact.html">Liên hệ</a></li>
+                        <li><a href="about.html">Về Chúng Tôi</a></li>
+                        <li><a href="reviews.html">Đánh giá</a></li>
+                        <li class="auth-nav-item"><a href="auth.html">Đăng ký / Đăng nhập</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="footer-column">
+                <h3 class="footer-title">VỊ TRÍ</h3>
+                <p class="footer-info">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Đông Lợi, Thị xã Bình Minh<br>
+                    Tỉnh Vĩnh Long, Việt Nam
+                </p>
+            </div>
+            <div class="footer-column">
+                <h3 class="footer-title">GIỜ MỞ CỬA</h3>
+                <p class="footer-info">
+                    <i class="fas fa-clock"></i>
+                    Chủ nhật - Thứ tư: 11:00 sáng - 10:00 tối<br>
+                    Thứ năm - Thứ bảy: 11:00 sáng - 11:00 tối
+                </p>
+            </div>
+            <div class="footer-column">
+                <h3 class="footer-title">LIÊN HỆ</h3>
+                <p class="footer-info">
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:0909688688">0909-688-688</a><br>
+                    <i class="fas fa-envelope"></i>
+                    <a href="mailto:quantrinolitapizza@gmail.com">quantrinolitapizza@gmail.com</a>
+                </p>
+                <div class="footer-social">
+                    <a href="#" class="social-link" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Nolita Pizza. Tất cả quyền được bảo lưu.</p>
+        </div>
+    </div>
+</footer>
+
+    <!-- AOS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js" crossorigin="anonymous"></script>
+
+    <!-- Shared JS -->
+    <script src="js/main.js"></script>
+    <script type="module" src="js/product-detail.js"></script>
+    <script type="module" src="js/auth.js"></script>
+</body>
+</html>

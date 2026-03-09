@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nolita Pizza - Pizza New York Chính Thống</title>
+    <meta name="description" content="Nhà hàng Pizza cao cấp với hương vị New York chính thống. Đặt hàng ngay để thưởng thức những chiếc pizza tuyệt vời nhất.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="css/fontawesome/css/all.min.css">
+    
+    <!-- AOS Animation -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.css" rel="stylesheet" crossorigin="anonymous">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <a href="index.html">
+                        <img src="images/logonolita.png" alt="Nolita Pizza Logo" class="logo-img" onerror="this.src='data:image/svg+xml,%3Csvg width=\'200\' height=\'200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'100\' cy=\'100\' r=\'95\' fill=\'%23111111\' stroke=\'%23ff7a00\' stroke-width=\'4\'/%3E%3Cpath d=\'M 100 30 L 170 100 L 100 100 Z\' fill=\'%23ff7a00\' opacity=\'0.9\'/%3E%3Cpath d=\'M 100 30 L 100 100 L 30 100 Z\' fill=\'%23ff7a00\' opacity=\'0.7\'/%3E%3Ccircle cx=\'120\' cy=\'80\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'90\' cy=\'70\' r=\'8\' fill=\'%238B0000\'/%3E%3Ccircle cx=\'110\' cy=\'100\' r=\'8\' fill=\'%238B0000\'/%3E%3Ctext x=\'100\' y=\'150\' font-family=\'Arial\' font-size=\'60\' font-weight=\'bold\' fill=\'%23ff7a00\' text-anchor=\'middle\'%3EN%3C/text%3E%3C/svg%3E'">
+                        <span class="logo-text">NOLITA <span class="logo-subtext">PIZZA</span></span>
+                    </a>
+                </div>
+                <nav class="nav" id="nav">
+                    <ul class="nav-list">
+                        <li><a href="index.html" class="nav-link active">Trang chủ</a></li>
+                        <li><a href="menu.html" class="nav-link">Món ăn</a></li>
+                        <li><a href="order.html" class="nav-link">Đặt Món</a></li>
+                        <li><a href="contact.html" class="nav-link">Liên hệ</a></li>
+                        <li><a href="about.html" class="nav-link">Về Chúng Tôi</a></li>
+                        <li><a href="reviews.html" class="nav-link">Đánh giá</a></li>
+                        <li class="auth-nav-item"><a href="auth.html" class="nav-link">Đăng ký / Đăng nhập</a></li>
+                    </ul>
+                </nav>
+                <div class="header-actions">
+                    <a href="auth.html" class="btn-account" id="auth-buttons" aria-label="Đăng nhập">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                    <a href="user-account.html" class="btn-account" id="user-icon" style="display:none" aria-label="Tài khoản">
+                        <i class="fas fa-user-circle"></i>
+                    </a>
+                    <a href="order.html" class="btn-cart" aria-label="Giỏ hàng">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </a>
+                    <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-slider">
+            <div class="hero-slide active">
+                <div class="hero-image" style="background-image: url('https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1920&q=80');"></div>
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <h1 class="hero-title" data-aos="fade-up">PIZZA NEW YORK<br>CHÍNH THỐNG</h1>
+                    <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">Hương vị Manhattan sôi động ngay tại bàn ăn của bạn</p>
+                    <a href="menu.html" class="btn btn-primary" data-aos="fade-up" data-aos-delay="400">Đặt hàng ngay</a>
+                </div>
+            </div>
+            <div class="hero-slide">
+                <div class="hero-image" style="background-image: url('https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=1920&q=80');"></div>
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <h1 class="hero-title">MÓN ĂN Ý<br>ĐÍCH THỰC</h1>
+                    <p class="hero-subtitle">Trải nghiệm ẩm thực Ý cao cấp với nguyên liệu tươi ngon nhất</p>
+                    <a href="menu.html" class="btn btn-primary">Khám phá thực đơn</a>
+                </div>
+            </div>
+            <div class="hero-slide">
+                <div class="hero-image" style="background-image: url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1920&q=80');"></div>
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <h1 class="hero-title">ĐẶT TIỆC<br>CHO NHÓM</h1>
+                    <p class="hero-subtitle">Tổ chức sự kiện đáng nhớ với dịch vụ phục vụ chuyên nghiệp</p>
+                    <a href="order.html" class="btn btn-primary">Đặt bàn ngay</a>
+                </div>
+            </div>
+        </div>
+        <div class="hero-controls">
+            <button class="hero-prev" aria-label="Previous">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="hero-next" aria-label="Next">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            <div class="hero-dots">
+                <span class="dot active" data-slide="0"></span>
+                <span class="dot" data-slide="1"></span>
+                <span class="dot" data-slide="2"></span>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-image" data-aos="fade-right">
+                    <div class="about-image-wrapper">
+                        <img src="https://images.unsplash.com/photo-1571997478779-2adcbbe9ab2f?w=800&q=80" alt="Pizza Nolita">
+                    </div>
+                </div>
+                <div class="about-text" data-aos="fade-left">
+                    <h2 class="section-title">PIZZA NOLITA Ở MANHATTAN</h2>
+                    <h3 class="section-subtitle">Hương vị, phong cách New York sôi động</h3>
+                    <p class="about-description">
+                        Chào mừng đến với Nolita Pizza - nơi mang đến trải nghiệm ẩm thực Ý chính thống với phong cách New York đầy năng động. 
+                        Chúng tôi tự hào phục vụ những chiếc pizza được làm thủ công từ những nguyên liệu tươi ngon nhất, 
+                        kết hợp với công thức bí truyền được truyền lại qua nhiều thế hệ.
+                    </p>
+                    <p class="about-description">
+                        Mỗi chiếc pizza của chúng tôi được nướng trong lò gỗ truyền thống, tạo nên lớp vỏ giòn tan bên ngoài 
+                        và mềm mại bên trong, cùng với lớp phô mai tan chảy và các topping cao cấp được chọn lọc kỹ lưỡng.
+                    </p>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Menu Section - Featured Products -->
+    <section class="menu" id="menu">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">THỰC ĐƠN PIZZA NỔI BẬT</h2>
+                <p class="section-subtitle">Khám phá những món ăn được yêu thích nhất</p>
+            </div>
+            <div id="featuredProducts" class="featured-slider-wrap">
+                <div class="featured-slider">
+                    <button type="button" class="featured-arrow featured-prev" aria-label="Món trước">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="featured-viewport">
+                        <div class="featured-track"></div>
+                    </div>
+                    <button type="button" class="featured-arrow featured-next" aria-label="Món sau">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Banner khuyến mãi - Có gì mới mẻ -->
+    <section class="testimonials section-banner-promo">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">CÓ GÌ MỚI MẺ KHÔNG?</h2>
+                <p class="section-subtitle">Ưu đãi dành cho bạn</p>
+            </div>
+            <a href="order.html" class="banner-promo-link" data-aos="fade-up">
+                <img src="images/bannerpizza.png" alt="Nolita Pizza - Mua 1 Tặng 1 cho khách hàng mới đăng ký" class="banner-promo-img">
+            </a>
+        </div>
+    </div>
+    <a href="order.html" class="banner-promo-link" data-aos="fade-up">
+        <br>
+        <img src="images/giamgiabanner.png" alt="Nolita Pizza - Giảm giá 15% cho đơn từ 500k " class="banner-promo-img">
+        <br>
+    </a>
+</div>
+    </section>
+
+    <!-- Các nhà cung cấp uy tín -->
+    <section class="suppliers" id="suppliers">
+        <div class="container">
+            <div class="suppliers-header" data-aos="fade-up">
+                <h2 class="suppliers-title">Các nhà cung cấp uy tín</h2>
+                <p class="suppliers-subtitle">Các đối tác uy tín đã hợp tác với Nolita</p>
+            </div>
+            <div class="suppliers-carousel" data-aos="fade-up">
+                <button type="button" class="suppliers-arrow suppliers-prev" aria-label="Trước">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <div class="suppliers-viewport">
+                    <div class="suppliers-track">
+                        <div class="suppliers-slide"><img src="images/coca.png" alt="Coca-Cola" loading="lazy"></div>
+                        <div class="suppliers-slide"><img src="images/pepsi.png" alt="Pepsi" loading="lazy"></div>
+                        <div class="suppliers-slide"><img src="images/CP.png" alt="CP Group" loading="lazy"></div>
+                        <div class="suppliers-slide suppliers-slide--large-logo"><img src="images/ajinomoto.png" alt="Ajinomoto" loading="lazy"></div>
+                        <div class="suppliers-slide suppliers-slide--large-logo"><img src="images/cholimex.png" alt="Cholimex" loading="lazy"></div>
+                        <div class="suppliers-slide"><img src="images/safoco.png" alt="safoco" loading="lazy"></div>
+                        <div class="suppliers-slide"><img src="images/anchor.png" alt="anchor" loading="lazy"></div>
+                        <div class="suppliers-slide"><img src="images/emborg.png" alt="emborg" loading="lazy"></div>
+                    </div>
+                </div>
+                <button type="button" class="suppliers-arrow suppliers-next" aria-label="Sau">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <div class="suppliers-dots" id="suppliersDots"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <a href="index.html">
+                            <img src="images/logonolita.png" alt="Nolita Pizza Logo" class="logo-img">
+                            <span class="logo-text">NOLITA <span class="logo-subtext">PIZZA</span></span>
+                        </a>
+                    </div>
+                    <p class="footer-description">
+                        Nhà hàng Pizza cao cấp với hương vị New York chính thống. 
+                        Mang đến trải nghiệm ẩm thực Ý đích thực cho thực khách Việt Nam.
+                    </p>
+                    <nav class="footer-nav">
+                        <ul class="footer-nav-list">
+                            <li><a href="index.html">Trang chủ</a></li>
+                            <li><a href="menu.html">Món ăn</a></li>
+                            <li><a href="order.html">Đặt Món</a></li>
+                            <li><a href="contact.html">Liên hệ</a></li>
+                            <li><a href="about.html">Về Chúng Tôi</a></li>
+                            <li><a href="reviews.html">Đánh giá</a></li>
+                            <li class="auth-nav-item"><a href="auth.html">Đăng ký / Đăng nhập</a></li>
+                        </ul>
+                    </nav>
+                </div>
+                <div class="footer-column">
+                    <h3 class="footer-title">VỊ TRÍ</h3>
+                    <p class="footer-info">
+                        <i class="fas fa-map-marker-alt"></i>
+                        Đông Lợi, Thị xã Bình Minh<br>
+                        Tỉnh Vĩnh Long, Việt Nam
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h3 class="footer-title">GIỜ MỞ CỬA</h3>
+                    <p class="footer-info">
+                        <i class="fas fa-clock"></i>
+                        Chủ nhật - Thứ tư: 11:00 sáng - 10:00 tối<br>
+                        Thứ năm - Thứ bảy: 11:00 sáng - 11:00 tối
+                    </p>
+                </div>
+                <div class="footer-column">
+                    <h3 class="footer-title">LIÊN HỆ</h3>
+                    <p class="footer-info">
+                        <i class="fas fa-phone"></i>
+                        <a href="tel:0909688688">0909-688-688</a><br>
+                        <i class="fas fa-envelope"></i>
+                        <a href="mailto:quantrinolitapizza@gmail.com">quantrinolitapizza@gmail.com</a>
+                    </p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Nolita Pizza. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- AOS JS -->
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js" crossorigin="anonymous"></script>
+    
+    <!-- Custom JS -->
+    <script type="module" src="js/main.js"></script>
+    <script type="module" src="js/auth.js"></script>
+</body>
+</html>

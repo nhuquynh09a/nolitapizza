@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Dashboard - Nolita Pizza</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/fontawesome/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="admin-body">
+  <div class="admin-shell">
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+      <div class="admin-logo">
+        <img src="images/logonolita.png" alt="Nolita Pizza Logo" class="logo-img">
+        <div class="admin-logo-text">
+          <span class="admin-logo-title">Nolita Admin</span>
+          <span class="admin-logo-subtitle">Pizza Dashboard</span>
+        </div>
+      </div>
+
+      <nav class="admin-nav">
+        <div class="admin-nav-section">
+          <p class="admin-nav-label">Tổng quan</p>
+          <a href="#dashboard" class="admin-nav-link admin-nav-link--active">
+            <i class="fas fa-chart-line" aria-hidden="true"></i>
+            <span>Dashboard</span>
+          </a>
+        </div>
+
+        <div class="admin-nav-section">
+          <p class="admin-nav-label">Quản lý</p>
+          <a href="#users" class="admin-nav-link">
+            <i class="fas fa-users" aria-hidden="true"></i>
+            <span>Người dùng</span>
+          </a>
+          <a href="#orders" class="admin-nav-link">
+            <i class="fas fa-shopping-cart" aria-hidden="true"></i>
+            <span>Đơn hàng</span>
+          </a>
+          <a href="#foods" class="admin-nav-link">
+            <i class="fas fa-utensils" aria-hidden="true"></i>
+            <span>Món ăn</span>
+          </a>
+          <a href="#categories" class="admin-nav-link">
+            <i class="fas fa-folder" aria-hidden="true"></i>
+            <span>Danh mục</span>
+          </a>
+          <a href="#contacts" class="admin-nav-link">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <span>Liên hệ</span>
+          </a>
+          <a href="#reviews" class="admin-nav-link">
+            <i class="fas fa-star" aria-hidden="true"></i>
+            <span>Đánh giá</span>
+          </a>
+        </div>
+
+        <div class="admin-nav-section">
+          <p class="admin-nav-label">Báo cáo</p>
+          <a href="#analytics" class="admin-nav-link">
+            <i class="fas fa-chart-bar" aria-hidden="true"></i>
+            <span>Thống kê doanh thu</span>
+          </a>
+        </div>
+      </nav>
+
+      <div class="admin-sidebar-footer">
+        <button type="button" id="logoutBtn" class="btn btn-outline admin-logout-btn">
+          <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+          Đăng xuất
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <div class="admin-main">
+      <!-- Header -->
+      <header class="admin-header">
+        <div>
+          <h1 class="admin-header-title">Bảng điều khiển Admin</h1>
+          <p class="admin-header-subtitle">
+            Quản lý người dùng, đơn hàng, món ăn và doanh thu cho Nolita Pizza.
+          </p>
+        </div>
+        <div class="admin-header-actions">
+          <select class="admin-select" id="dashboardPeriod">
+            <option value="today">Hôm nay</option>
+            <option value="7">7 ngày qua</option>
+            <option value="30">30 ngày qua</option>
+          </select>
+        </div>
+      </header>
+
+      <!-- Dashboard summary: chỉ hiển thị số liệu tổng quan -->
+      <section id="dashboard" class="admin-section">
+        <div class="admin-grid admin-grid--stats">
+          <article class="admin-card admin-card--stat">
+            <p class="admin-card-label">Doanh thu (đã giao hàng)</p>
+            <p class="admin-card-value" id="dashboardRevenue">—</p>
+          </article>
+          <article class="admin-card admin-card--stat">
+            <p class="admin-card-label">Người dùng mới</p>
+            <p class="admin-card-value" id="dashboardNewUsers">—</p>
+          </article>
+          <article class="admin-card admin-card--stat">
+            <p class="admin-card-label">Món ăn mới</p>
+            <p class="admin-card-value" id="dashboardNewProducts">—</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- Users management -->
+      <section id="users" class="admin-section" style="display:none">
+        <div class="admin-section-header">
+          <div>
+            <h2 class="admin-section-title">Quản lý người dùng</h2>
+            
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button type="button" id="btnRefreshUsers" class="btn btn-outline admin-section-btn">Tải lại</button>
+            <button type="button" id="btnAddUser" class="btn btn-primary admin-section-btn">
+              Thêm người dùng
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-card admin-card--table">
+          <div class="admin-table-toolbar">
+            <input type="text" class="admin-input" placeholder="Tìm theo tên hoặc email..." />
+            <select class="admin-select admin-select--sm">
+              <option value="">Tất cả role</option>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+              <option value="kitchen">Kitchen</option>
+            </select>
+          </div>
+          <div class="admin-table-scroll">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Email</th>
+                  <th>Họ tên</th>
+                  <th>Role</th>
+                  <th>Ngày tạo</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="usersTbody">
+                <!-- Render bằng JS từ Firebase -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Orders management -->
+      <section id="orders" class="admin-section" style="display:none">
+        <div class="admin-section-header">
+          <div>
+            <h2 class="admin-section-title">Quản lý đơn hàng</h2>
+            
+            </p>
+          </div>
+        </div>
+
+        <div class="admin-card admin-card--table">
+          <div class="admin-table-toolbar">
+            <input type="text" class="admin-input" placeholder="Tìm đơn theo mã hoặc tên khách..." />
+            <select class="admin-select admin-select--sm" id="ordersFilterStatus">
+              <option value="">Tất cả trạng thái</option>
+              <option value="pending">Chờ xác nhận</option>
+              <option value="confirmed">Đã xác nhận</option>
+              <option value="ready">Đã gửi bếp</option>
+              <option value="delivering">Đang giao</option>
+              <option value="completed">Hoàn thành</option>
+              <option value="cancelled">Đã hủy</option>
+            </select>
+          </div>
+          <div class="admin-table-scroll">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Mã đơn</th>
+                  <th>Khách hàng</th>
+                  <th>Tổng tiền</th>
+                  <th>Trạng thái</th>
+                  <th>Ngày giờ</th>
+                  <th>Lý do hủy</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="ordersTbody"></tbody>
+            </table>
+          </div>
+          <div id="ordersPagination" class="admin-pagination"></div>
+        </div>
+      </section>
+
+      <!-- Foods management -->
+      <section id="foods" class="admin-section" style="display:none">
+        <div class="admin-section-header">
+          <div>
+            <h2 class="admin-section-title">Quản lý món ăn</h2>
+            
+          </div>
+          <button type="button" id="btnAddFood" class="btn btn-primary admin-section-btn">
+            Thêm món ăn
+          </button>
+        </div>
+
+        <div class="admin-card admin-card--table">
+          <div class="admin-table-toolbar">
+            <input type="text" class="admin-input" placeholder="Tìm tên món..." />
+            <select class="admin-select admin-select--sm">
+              <option value="">Tất cả danh mục</option>
+            </select>
+          </div>
+          <div class="admin-table-scroll">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Tên món</th>
+                  <th>Giá</th>
+                  <th>Size</th>
+                  <th>Calories (size)</th>
+                  <th>Topping</th>
+                  <th>Calories (topping)</th>
+                  <th>Danh mục</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Dữ liệu thật sẽ được render bằng JS từ Firebase -->
+              </tbody>
+            </table>
+          </div>
+          <div id="foodsPagination" class="admin-pagination"></div>
+        </div>
+      </section>
+
+      <!-- Contact management -->
+      <section id="contacts" class="admin-section" style="display:none">
+        <div class="admin-section-header">
+          <div>
+            <h2 class="admin-section-title">Quản lý liên hệ</h2>
+            <p class="admin-section-subtitle">
+              Tin nhắn liên hệ từ khách hàng. Sửa trạng thái hoặc xóa.
+            </p>
+          </div>
+        </div>
+        <div class="admin-card admin-card--table">
+          <div class="admin-table-scroll">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Họ tên</th>
+                  <th>Email</th>
+                  <th>Điện thoại</th>
+                  <th>Tiêu đề</th>
+                  <th>Nội dung</th>
+                  <th>Ngày</th>
+                  <th>Trạng thái</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="contactsTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Reviews management -->
+      <section id="reviews" class="admin-section" style="display:none">
+        <div class="admin-section-header">
+          <div>
+            <h2 class="admin-section-title">Quản lý đánh giá</h2>
+            
+          </div>
+        </div>
+        <div class="admin-card admin-card--table">
+          <div class="admin-table-scroll">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Người đánh giá</th>
+                  <th>Sao</th>
+                  <th>Nội dung</th>
+                  <th>Ngày</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="reviewsTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Categories management -->
+      <section id="categories" class="admin-section" style="display:none">
+        <div class="admin-section-header">
+          <div>
+            <h2 class="admin-section-title">Quản lý danh mục</h2>
+            
+          </div>
+          <button type="button" id="btnAddCategory" class="btn btn-primary admin-section-btn">
+            Thêm danh mục
+          </button>
+        </div>
+
+        <div class="admin-card admin-card--table">
+          <div class="admin-table-scroll">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Tên danh mục</th>
+                  <th>Mô tả</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Dữ liệu thật sẽ được render bằng JS từ Firebase -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Revenue analytics -->
+      <section id="analytics" class="admin-section" style="display:none">
+        <div class="admin-section-header">
+          <div>
+            <h2 class="admin-section-title">Thống kê doanh thu</h2>
+            
+          </div>
+        </div>
+
+        <div class="admin-analytics-tops">
+          <article class="admin-card">
+            <h3 class="admin-card-heading">Tổng doanh thu</h3>
+            <p class="admin-analytics-value" id="dashboardRevenueTotal">—</p>
+          </article>
+          <article class="admin-card">
+            <h3 class="admin-card-heading">Doanh thu Offline </h3>
+            <p class="admin-analytics-value" id="dashboardRevenueOffline">—</p>
+          </article>
+          <article class="admin-card">
+            <h3 class="admin-card-heading">Doanh thu Online </h3>
+            <p class="admin-analytics-value" id="dashboardRevenueOnline">—</p>
+          </article>
+        </div>
+
+        <div class="admin-analytics-charts">
+          <article class="admin-card admin-card--chart">
+            <h3 class="admin-card-heading">Doanh thu theo ngày</h3>
+            <div class="admin-chart-placeholder admin-chart-placeholder--large" id="dashboardRevenueDailyChart">
+              Biểu đồ đường (line chart) doanh thu theo ngày sẽ hiển thị ở đây.
+            </div>
+          </article>
+          <article class="admin-card admin-card--chart">
+            <h3 class="admin-card-heading">Doanh thu theo tháng</h3>
+            <div class="admin-chart-placeholder admin-chart-placeholder--large" id="dashboardRevenueMonthlyChart">
+              Biểu đồ cột (bar chart) doanh thu theo tháng sẽ hiển thị ở đây.
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Modal popup chung cho Thêm người dùng / món ăn / danh mục -->
+  <div id="adminModalBackdrop" class="admin-modal-backdrop" aria-hidden="true">
+    <div class="admin-modal">
+      <div class="admin-modal-header">
+        <h3 id="adminModalTitle">Tiêu đề</h3>
+        <button type="button" id="adminModalClose" class="admin-modal-close" aria-label="Đóng">&times;</button>
+      </div>
+      <div id="adminModalBody" class="admin-modal-body"></div>
+      <div id="adminModalFooter" class="admin-modal-footer"></div>
+    </div>
+  </div>
+
+  <script type="module" src="js/admin-account.js"></script>
+</body>
+</html>

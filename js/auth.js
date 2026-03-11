@@ -1,6 +1,6 @@
 // ===== FIREBASE AUTH (ES Module) =====
 // Import auth + user profile từ firebase.js
-import { auth, onAuthStateChanged, login, register, loginWithGooglePopup, loginWithGoogleRedirect, getAuthRedirectResult, logout, saveUserProfile, getUserProfile } from './firebase.js';
+import { auth, onAuthStateChanged, login, register, loginWithGooglePopup, loginWithGoogleRedirect, getAuthRedirectResult, logout, saveUserProfile, getUserProfile, resetPassword } from './firebase.js';
 
 // ============================================
 // FIREBASE AUTH ERROR MESSAGES (tiếng Việt)
@@ -294,6 +294,84 @@ document.querySelectorAll('.password-toggle').forEach(btn => {
 // ============================================
 // FORM VALIDATION
 // ============================================
+
+// Forgot password (reset via email)
+const forgotLink = document.querySelector('.forgot-password-link');
+const forgotBackdrop = document.getElementById('forgotPasswordBackdrop');
+const forgotForm = document.getElementById('forgotPasswordForm');
+const forgotEmailInput = document.getElementById('forgotEmail');
+const forgotEmailError = document.getElementById('forgotEmailError');
+const forgotSubmitBtn = document.getElementById('forgotSubmitBtn');
+const forgotCancelBtn = document.getElementById('forgotCancelBtn');
+const forgotCloseBtn = document.getElementById('forgotCloseBtn');
+
+function openForgotModal(prefillEmail) {
+    if (!forgotBackdrop) return;
+    if (forgotEmailError) forgotEmailError.textContent = '';
+    if (forgotEmailInput) {
+        forgotEmailInput.value = prefillEmail || '';
+    }
+    forgotBackdrop.classList.add('auth-modal-backdrop--open');
+    forgotBackdrop.setAttribute('aria-hidden', 'false');
+    if (forgotEmailInput) {
+        setTimeout(() => forgotEmailInput.focus(), 50);
+    }
+}
+
+function closeForgotModal() {
+    if (!forgotBackdrop) return;
+    forgotBackdrop.classList.remove('auth-modal-backdrop--open');
+    forgotBackdrop.setAttribute('aria-hidden', 'true');
+}
+
+if (forgotLink && forgotBackdrop && forgotForm) {
+    forgotLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        const currentEmail = (document.getElementById('loginEmail')?.value || '').trim();
+        openForgotModal(currentEmail);
+    });
+
+    forgotBackdrop.addEventListener('click', (e) => {
+        if (e.target === forgotBackdrop) {
+            closeForgotModal();
+        }
+    });
+    if (forgotCancelBtn) forgotCancelBtn.addEventListener('click', closeForgotModal);
+    if (forgotCloseBtn) forgotCloseBtn.addEventListener('click', closeForgotModal);
+
+    forgotForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!forgotEmailInput || !forgotSubmitBtn) return;
+        const email = forgotEmailInput.value.trim();
+        if (forgotEmailError) forgotEmailError.textContent = '';
+
+        if (!email) {
+            if (forgotEmailError) forgotEmailError.textContent = 'Vui lòng nhập email';
+            return;
+        }
+        if (!isValidEmail(email)) {
+            if (forgotEmailError) forgotEmailError.textContent = 'Email không hợp lệ';
+            return;
+        }
+
+        const originalText = forgotSubmitBtn.innerHTML;
+        forgotSubmitBtn.disabled = true;
+        forgotSubmitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+
+        try {
+            await resetPassword(email);
+            closeForgotModal();
+            showSuccessMessage('Đã gửi email đặt lại mật khẩu. Vui lòng kiểm tra hộp thư.');
+        } catch (err) {
+            console.error('[auth] reset password error:', err);
+            const msg = getAuthErrorMessage(err);
+            showErrorMessage(msg);
+        } finally {
+            forgotSubmitBtn.disabled = false;
+            forgotSubmitBtn.innerHTML = originalText;
+        }
+    });
+}
 
 // Login Form
 document.getElementById('loginForm').addEventListener('submit', async function(e) {

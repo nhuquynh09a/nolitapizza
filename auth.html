@@ -280,7 +280,34 @@
         </div>
     </main>
 
-
+    <!-- Forgot Password Modal -->
+    <div class="auth-modal-backdrop" id="forgotPasswordBackdrop" aria-hidden="true">
+        <div class="auth-modal" role="dialog" aria-modal="true" aria-labelledby="forgotPasswordTitle">
+            <button type="button" class="auth-modal-close" id="forgotCloseBtn" aria-label="Đóng">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="auth-modal-header">
+                <h3 id="forgotPasswordTitle">Đặt lại mật khẩu</h3>
+                <p>Nhập email bạn đã dùng để đăng ký tài khoản Nolita Pizza. Chúng tôi sẽ gửi link đặt lại mật khẩu.</p>
+            </div>
+            <form id="forgotPasswordForm" class="auth-modal-form">
+                <div class="form-group">
+                    <label for="forgotEmail">Email</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="forgotEmail" name="email" placeholder="email@example.com" required>
+                    </div>
+                    <span class="error-message" id="forgotEmailError"></span>
+                </div>
+                <div class="auth-modal-actions">
+                    <button type="button" class="auth-btn secondary" id="forgotCancelBtn">Hủy</button>
+                    <button type="submit" class="auth-btn primary" id="forgotSubmitBtn">
+                        <i class="fas fa-paper-plane"></i> Gửi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Scripts: main.js (global), auth.js (ES Module - đăng nhập/đăng ký/Google) -->
     <script src="js/main.js"></script>

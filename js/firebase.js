@@ -6,7 +6,7 @@ import { initializeApp } from
 import { getDatabase, ref, get, set, push, update, remove, onValue } from
 "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, GoogleAuthProvider, onAuthStateChanged } from
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, GoogleAuthProvider, onAuthStateChanged, sendPasswordResetEmail } from
 "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -51,6 +51,15 @@ export async function register(email, password) {
  */
 export async function login(email, password) {
   return signInWithEmailAndPassword(auth, email, password);
+}
+
+/**
+ * Gửi email đặt lại mật khẩu.
+ * @param {string} email
+ * @returns {Promise<void>}
+ */
+export async function resetPassword(email) {
+  return sendPasswordResetEmail(auth, email);
 }
 
 /**

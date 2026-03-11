@@ -5423,6 +5423,76 @@ table.admin-table th,table.admin-table td{padding:10px;border-bottom:1px solid #
     filter: brightness(1.2);
 }
 
+/* Forgot password modal */
+.auth-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 11000;
+    padding: 20px;
+}
+
+.auth-modal-backdrop--open {
+    display: flex;
+}
+
+.auth-modal {
+    background: linear-gradient(145deg, #1e1e1e, #252525);
+    border-radius: 18px;
+    max-width: 420px;
+    width: 100%;
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6);
+    position: relative;
+    padding: 26px 24px 22px 24px;
+}
+
+.auth-modal-header h3 {
+    margin: 0 0 8px;
+    font-size: 1.3rem;
+    color: #fff;
+}
+
+.auth-modal-header p {
+    margin: 0 0 18px;
+    font-size: 0.9rem;
+    color: var(--text-gray);
+}
+
+.auth-modal-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.auth-modal-close:hover {
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.auth-modal-form .form-group {
+    margin-bottom: 16px;
+}
+
+.auth-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.auth-modal-actions .auth-btn.secondary {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
 /* Form Checkbox */
 .form-checkbox {
     display: flex;

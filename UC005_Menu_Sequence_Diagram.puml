@@ -1,0 +1,24 @@
+@startuml UC005_Menu_Sequence_Diagram
+title UC005: Xem danh mục món ăn - Sequence Diagram
+
+actor "Người dùng" as User
+participant "Trang Món ăn (menu.html)" as UI
+participant "Realtime Database" as DB
+
+User -> UI: 1. Truy cập trang Món ăn
+UI -> DB: 2. Tải danh sách món và danh mục
+
+alt Tải dữ liệu thành công
+  DB --> UI: Danh sách món + danh mục
+  UI --> User: 3. Hiển thị lưới món, bộ lọc danh mục
+  User -> UI: 4. Chọn danh mục hoặc tìm món
+  UI --> User: 5. Cập nhật danh sách món theo bộ lọc
+  User -> UI: 6. Chọn một món để xem chi tiết
+  UI --> User: 7. Chuyển sang trang chi tiết món (product-detail.html)
+else Lỗi tải dữ liệu
+  DB --> UI: Lỗi / không có dữ liệu
+  UI --> User: Hiển thị trạng thái trống / thông báo lỗi
+end
+
+@enduml
+

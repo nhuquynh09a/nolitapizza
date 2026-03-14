@@ -1,5 +1,3 @@
-# Nolita Pizza - Website Thương Mại Điện Tử
-
 git init
 git add .
 git commit -m "Update: Thêm mới... "

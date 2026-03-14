@@ -49,6 +49,12 @@ const ROLE_PAGES = {
 const ADMIN_EMAIL = 'quantrinolitapizza@gmail.com';
 
 async function redirectAfterLogin(uid, goToIndex = true) {
+    // Xóa giỏ hàng của khách vãng lai khi người dùng đăng nhập (tránh thấy món khách đã thêm)
+    try {
+        if (typeof localStorage !== 'undefined') localStorage.removeItem('cartItems');
+        if (typeof window !== 'undefined') window.cartItems = [];
+    } catch (e) {}
+
     if (window.__authReturnUrl) {
         const url = window.__authReturnUrl;
         window.__authReturnUrl = null;

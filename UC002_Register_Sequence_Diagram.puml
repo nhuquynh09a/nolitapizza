@@ -1,0 +1,23 @@
+@startuml UC002_Register_Sequence_Diagram
+title UC002: Đăng ký tài khoản - Sequence Diagram
+
+actor "Khách vãng lai" as User
+participant "Giao diện đăng ký" as UI
+participant "Firebase Authentication" as Auth
+participant "Realtime Database" as DB
+
+User -> UI: 1. Chuyển form Đăng ký, nhập Họ tên, Email, SĐT, Mật khẩu
+User -> UI: 2. Đồng ý điều khoản, bấm Đăng ký
+UI -> Auth: 3. Gửi thông tin đăng ký (email, mật khẩu)
+Auth -> DB: 4. Lưu profile (users/{uid}, role "user")
+DB --> Auth: 5. Lưu thành công
+
+alt Đăng ký thành công
+  Auth --> UI: Tạo tài khoản thành công
+  UI --> User: Thông báo thành công, chuyển tab Đăng nhập hoặc trang chủ
+else Email đã tồn tại / thông tin không hợp lệ
+  Auth --> UI: Lỗi đăng ký
+  UI --> User: Hiển thị thông báo lỗi
+end
+
+@enduml

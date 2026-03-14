@@ -1,0 +1,24 @@
+@startuml UC004_Home_Sequence_Diagram
+title UC004: Xem trang chủ - Sequence Diagram
+
+actor "Người dùng" as User
+participant "Trang chủ (index.html)" as UI
+participant "Realtime Database" as DB
+collections "LocalStorage" as LS
+
+User -> UI: 1. Truy cập trang chủ
+UI -> LS: 2. Đọc cartItems
+LS --> UI: Số lượng giỏ hàng
+UI --> User: Hiển thị giao diện trang chủ
+
+UI -> DB: 3. Tải món nổi bật / dữ liệu hiển thị
+alt Tải dữ liệu thành công
+  DB --> UI: Danh sách món
+  UI --> User: Hiển thị món nổi bật
+else Lỗi tải dữ liệu
+  DB --> UI: Lỗi / không có dữ liệu
+  UI --> User: Hiển thị trạng thái trống / thông báo
+end
+
+@enduml
+

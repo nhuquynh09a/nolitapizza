@@ -6,7 +6,7 @@ import { initializeApp } from
 import { getDatabase, ref, get, set, push, update, remove, onValue } from
 "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
 
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, GoogleAuthProvider, onAuthStateChanged, sendPasswordResetEmail } from
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, GoogleAuthProvider, onAuthStateChanged, sendPasswordResetEmail, EmailAuthProvider, reauthenticateWithCredential, updatePassword } from
 "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
 const firebaseConfig = {
@@ -63,6 +63,25 @@ export async function resetPassword(email) {
 }
 
 /**
+ * Đổi mật khẩu cho user đăng nhập bằng email/password.
+ * Cần xác thực lại bằng mật khẩu cũ (reauthenticate) rồi mới gọi updatePassword.
+ * @param {string} oldPassword - Mật khẩu hiện tại
+ * @param {string} newPassword - Mật khẩu mới (ít nhất 6 ký tự)
+ * @returns {Promise<void>}
+ * @throws Nếu chưa đăng nhập, đăng nhập bằng Google (không có mật khẩu), sai mật khẩu cũ, hoặc mật khẩu mới không hợp lệ.
+ */
+export async function changePassword(oldPassword, newPassword) {
+  const user = auth.currentUser;
+  if (!user || !user.email) throw new Error('Bạn chưa đăng nhập.');
+  const providerId = user.providerData && user.providerData[0] && user.providerData[0].providerId;
+  if (providerId === 'google.com') throw new Error('Tài khoản đăng nhập bằng Google không thể đổi mật khẩu tại đây.');
+  if (!newPassword || newPassword.length < 6) throw new Error('Mật khẩu mới phải ít nhất 6 ký tự.');
+  const credential = EmailAuthProvider.credential(user.email, oldPassword);
+  await reauthenticateWithCredential(user, credential);
+  await updatePassword(user, newPassword);
+}
+
+/**
  * Đăng nhập bằng Google (popup). Dùng thử trước; nếu lỗi COOP/popup bị chặn thì dùng loginWithGoogleRedirect.
  */
 export async function loginWithGooglePopup() {
@@ -94,9 +113,21 @@ export async function getAuthRedirectResult() {
 
 /**
  * Đăng xuất.
+ * Xóa giỏ hàng localStorage để khách vãng lai không thấy giỏ của tài khoản vừa đăng xuất.
  * @returns {Promise<void>}
  */
 export async function logout() {
+  // Xóa giỏ hàng khi đăng xuất (giỏ chỉ lưu local, không lưu theo user)
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem('cartItems');
+    }
+    if (typeof window !== 'undefined') {
+      window.cartItems = [];
+    }
+  } catch (e) {
+    // Bỏ qua nếu localStorage bị chặn
+  }
   return signOut(auth);
 }
 

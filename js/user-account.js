@@ -1,5 +1,5 @@
 // User Account - dùng Firebase Auth + Realtime Database (ES Module)
-import { auth, onAuthStateChanged, getUserProfile, logout, getOrdersByUserId, getReviewsByUserId, saveReview, deleteReview as deleteReviewFromFirebase, saveUserProfile, updateOrder } from './firebase.js';
+import { auth, onAuthStateChanged, getUserProfile, logout, getOrdersByUserId, getReviewsByUserId, saveReview, deleteReview as deleteReviewFromFirebase, saveUserProfile, updateOrder, changePassword } from './firebase.js';
 
 // State: không dùng dữ liệu mẫu; profile được gán khi đã đăng nhập
 let profile = { name: '', email: '', uid: '', phone: '', address: '', created: '' };
@@ -430,12 +430,44 @@ if (submitReviewBtn) {
   });
 }
 
-// Password change
-$('#changePwdBtn').addEventListener('click',()=>{
-  const oldP = $('#oldPwd').value, newP = $('#newPwd').value, cP = $('#confirmPwd').value;
-  if(!oldP || !newP) return $('#pwdMsg').textContent = 'Vui lòng điền đủ thông tin';
-  if(newP !== cP) return $('#pwdMsg').textContent = 'Mật khẩu xác nhận không khớp';
-  $('#pwdMsg').textContent = 'Đã cập nhật (giả lập)'; setTimeout(()=>$('#pwdMsg').textContent='',2000);
+// Password change (Firebase Auth: reauthenticate + updatePassword)
+const pwdMsgEl = document.getElementById('pwdMsg');
+function setPwdMsg(text, isError = false) {
+  if (!pwdMsgEl) return;
+  pwdMsgEl.textContent = text;
+  pwdMsgEl.style.color = isError ? '#f5222d' : '#52c41a';
+}
+$('#changePwdBtn').addEventListener('click', async () => {
+  const oldP = ($('#oldPwd') && $('#oldPwd').value) || '';
+  const newP = ($('#newPwd') && $('#newPwd').value) || '';
+  const cP = ($('#confirmPwd') && $('#confirmPwd').value) || '';
+  if (!oldP || !newP) {
+    setPwdMsg('Vui lòng điền đủ thông tin.', true);
+    return;
+  }
+  if (newP.length < 6) {
+    setPwdMsg('Mật khẩu mới phải ít nhất 6 ký tự.', true);
+    return;
+  }
+  if (newP !== cP) {
+    setPwdMsg('Mật khẩu xác nhận không khớp.', true);
+    return;
+  }
+  setPwdMsg('Đang cập nhật...');
+  try {
+    await changePassword(oldP, newP);
+    setPwdMsg('Đã đổi mật khẩu thành công.');
+    if ($('#oldPwd')) $('#oldPwd').value = '';
+    if ($('#newPwd')) $('#newPwd').value = '';
+    if ($('#confirmPwd')) $('#confirmPwd').value = '';
+    setTimeout(() => { setPwdMsg(''); }, 3000);
+  } catch (e) {
+    const code = e && e.code;
+    const msg = code === 'auth/wrong-password' || code === 'auth/invalid-credential'
+      ? 'Mật khẩu cũ không đúng.'
+      : (code === 'auth/weak-password' ? 'Mật khẩu mới quá yếu (ít nhất 6 ký tự).' : (e && e.message) || 'Không thể đổi mật khẩu.');
+    setPwdMsg(msg, true);
+  }
 });
 
 // Logout: khi bấm "Xác nhận đăng xuất" thì hiện popup xác nhận, không dùng confirm() của trình duyệt

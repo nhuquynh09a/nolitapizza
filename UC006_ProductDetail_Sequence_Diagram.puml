@@ -1,0 +1,25 @@
+@startuml UC006_ProductDetail_Sequence_Diagram
+title UC006: Xem chi tiết món ăn - Sequence Diagram
+
+actor "Người dùng" as User
+participant "Trang Chi tiết món (product-detail.html)" as UI
+participant "Realtime Database" as DB
+collections "LocalStorage" as LS
+
+User -> UI: 1. Mở trang chi tiết món\n(với id món)
+UI -> DB: 2. Tải thông tin món\n+ product_details theo id
+
+alt Món tồn tại
+  DB --> UI: Dữ liệu món + size/topping/giá
+  UI --> User: 3. Hiển thị chi tiết món
+  User -> UI: 4. Chọn size, topping, số lượng\nvà bấm \"Thêm vào giỏ\"
+  UI -> LS: 5. Cập nhật cartItems trong localStorage
+  LS --> UI: Trạng thái giỏ mới
+  UI --> User: 6. Cập nhật số giỏ trên header\n+ thông báo thêm thành công
+else Món không tồn tại / lỗi tải
+  DB --> UI: Không tìm thấy món / lỗi
+  UI --> User: Hiển thị thông báo lỗi\nhoặc chuyển về trang Món ăn
+end
+
+@enduml
+

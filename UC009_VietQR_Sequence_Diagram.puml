@@ -1,0 +1,30 @@
+@startuml UC009_VietQR_Sequence_Diagram
+title UC009: Thanh toán online VietQR - Sequence Diagram
+
+actor "Người dùng" as User
+participant "Trang thanh toán (payment.html)" as UI
+participant "Realtime Database" as DB
+
+User -> UI: 1. Mở trang thanh toán\n(payment.html?order_id=...)
+UI -> DB: 2. Tải đơn theo order_id
+
+alt Đơn tồn tại
+  DB --> UI: Dữ liệu đơn
+  UI --> User: 3. Hiển thị số tiền, mã đơn,\nmã QR VietQR, thông tin ngân hàng
+  User -> User: 4. Quét QR, chuyển khoản\nbằng app ngân hàng
+  alt Bấm \"Tôi đã thanh toán\"
+    User -> UI: 5. Tôi đã thanh toán
+    UI -> DB: 6. Cập nhật payment_status = pending_confirm
+    DB --> UI: Đã cập nhật
+    UI --> User: Hiển thị \"Đã ghi nhận\"
+  else Bấm \"Hủy giao dịch\"
+    User -> UI: Hủy giao dịch
+    UI -> DB: Xóa đơn
+    UI --> User: Chuyển về order.html
+  end
+else Thiếu order_id / không tìm thấy đơn
+  DB --> UI: Không có đơn
+  UI --> User: Hiển thị lỗi, link quay lại
+end
+
+@enduml

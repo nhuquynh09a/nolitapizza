@@ -1,0 +1,30 @@
+@startuml UC020_AdminUsers_Sequence_Diagram
+title UC020: Quản trị viên – Quản lý người dùng - Sequence Diagram
+
+actor "Quản trị viên" as Admin
+participant "Trang Admin (tab Người dùng)" as UI
+participant "Realtime Database" as DB
+
+Admin -> UI: 1. Mở tab Người dùng
+UI -> DB: Tải users
+DB --> UI: Danh sách users
+UI --> Admin: Hiển thị bảng, nút Sửa, Xóa
+
+alt Sửa thông tin
+  Admin -> UI: 2. Bấm Sửa, nhập Email, Họ tên, Lưu (saveUserProfile)
+  UI -> DB: saveUserProfile
+  alt Thành công
+    DB --> UI: Đã cập nhật
+    UI --> Admin: Cập nhật bảng
+  else Thiếu email/họ tên / lỗi Firebase
+    DB --> UI: Lỗi
+    UI --> Admin: Thông báo
+  end
+else Xóa tài khoản
+  Admin -> UI: 3. Bấm Xóa, xác nhận (deleteUserProfile)
+  UI -> DB: deleteUserProfile
+  DB --> UI: Đã xóa
+  UI --> Admin: Cập nhật bảng
+end
+
+@enduml

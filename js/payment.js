@@ -4,7 +4,7 @@
 
 import { getOrderById, updateOrder, deleteOrder } from './firebase.js';
 
-// Cấu hình VietQR — đổi BANK_ID theo ngân hàng thực tế: tcb, vietcombank, mb, tpbank, viettinbank, ...
+// Cấu hình VietQR 
 const VIETQR_CONFIG = {
   BANK_ID: 'tcb',
   ACCOUNT_NO: '6666688888',
@@ -14,9 +14,9 @@ const VIETQR_CONFIG = {
 };
 
 /**
- * Tạo URL ảnh QR VietQR (dùng API img.vietqr.io).
+ * Tạo URL ảnh QR VietQR (API img.vietqr.io).
  * @param {number} amount - Số tiền (VND)
- * @param {string} addInfo - Nội dung chuyển khoản (mã đơn hàng, tối đa ~25-50 ký tự)
+ * @param {string} addInfo - Nội dung chuyển khoản 
  * @param {string} accountName - Tên chủ tài khoản
  * @returns {string} URL ảnh QR
  */

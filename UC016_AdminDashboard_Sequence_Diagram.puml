@@ -1,0 +1,23 @@
+@startuml UC016_AdminDashboard_Sequence_Diagram
+title UC016: Quản trị viên – Xem dashboard và thống kê - Sequence Diagram
+
+actor "Quản trị viên" as Admin
+participant "Trang Admin (Dashboard)" as UI
+participant "Realtime Database" as DB
+
+Admin -> UI: 1. Mở trang Admin (mặc định Dashboard)
+UI -> DB: 2. Tải orders, users, products\nlọc theo Hôm nay / 7 ngày / 30 ngày
+
+alt Tải thành công
+  DB --> UI: Dữ liệu orders, users, products
+  UI --> Admin: 3. Hiển thị Doanh thu, Người dùng mới,\nMón ăn mới (có thể có biểu đồ)
+  Admin -> UI: 4. Đổi dropdown (khoảng thời gian)
+  UI -> DB: Tải lại theo khoảng mới
+  DB --> UI: Dữ liệu
+  UI --> Admin: Cập nhật số liệu
+else Không đủ quyền / lỗi tải
+  DB --> UI: Lỗi hoặc từ chối
+  UI --> Admin: Chuyển index hoặc hiển thị \"—\" / thông báo
+end
+
+@enduml

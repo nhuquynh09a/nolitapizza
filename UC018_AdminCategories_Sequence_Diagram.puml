@@ -1,0 +1,23 @@
+@startuml UC018_AdminCategories_Sequence_Diagram
+title UC018: Quản trị viên – Quản lý danh mục - Sequence Diagram
+
+actor "Quản trị viên" as Admin
+participant "Trang Admin (tab Danh mục)" as UI
+participant "Realtime Database" as DB
+
+Admin -> UI: 1. Mở tab Danh mục
+UI -> DB: Tải categories
+DB --> UI: Danh sách danh mục
+UI --> Admin: Hiển thị bảng, nút Sửa, Xóa
+
+Admin -> UI: 2. Thêm (addCategory) / Sửa (updateCategory) / Xóa (deleteCategory)
+UI -> DB: addCategory / updateCategory / deleteCategory
+alt Thành công
+  DB --> UI: Đã lưu / đã cập nhật / đã xóa
+  UI --> Admin: Cập nhật bảng
+else Tên trống / lỗi Firebase
+  DB --> UI: Lỗi
+  UI --> Admin: Thông báo
+end
+
+@enduml

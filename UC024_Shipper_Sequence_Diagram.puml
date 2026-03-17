@@ -1,0 +1,23 @@
+@startuml UC024_Shipper_Sequence_Diagram
+title UC024: Giao hàng – Xem đơn cần giao và cập nhật trạng thái - Sequence Diagram
+
+actor "Nhân viên giao hàng" as Shipper
+participant "Trang Giao hàng (shipper-account.html)" as UI
+participant "Realtime Database" as DB
+
+Shipper -> UI: 1. Truy cập trang Giao hàng
+UI -> DB: Tải đơn (ready + kitchen done hoặc delivering đã nhận)
+DB --> UI: Danh sách đơn
+UI --> Shipper: Hiển thị đơn cần giao
+
+Shipper -> UI: 2. Nhận đơn (status=delivering, shipping_status=accepted) / 3. Đã giao (status=completed)
+UI -> DB: updateOrder
+alt Thành công
+  DB --> UI: Đã cập nhật
+  UI --> Shipper: Cập nhật hiển thị (khách/admin thấy realtime)
+else Chưa đăng nhập / role khác / lỗi Firebase
+  DB --> UI: Lỗi
+  UI --> Shipper: Chuyển index/auth hoặc thông báo
+end
+
+@enduml

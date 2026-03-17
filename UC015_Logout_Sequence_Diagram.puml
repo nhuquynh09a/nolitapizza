@@ -1,0 +1,18 @@
+@startuml UC015_Logout_Sequence_Diagram
+title UC015: Đăng xuất - Sequence Diagram
+
+actor "Người dùng" as User
+participant "Trang tài khoản\n(user/admin/bếp/giao hàng)" as UI
+participant "Firebase Authentication" as Auth
+participant "LocalStorage" as LS
+
+User -> UI: 1. Bấm Đăng xuất
+UI --> User: 2. Hiển thị xác nhận (nếu có)
+User -> UI: 3. Xác nhận đăng xuất
+
+UI -> LS: 4. Xóa cartItems (giỏ khách)
+UI -> Auth: 5. signOut()
+Auth --> UI: Đã đăng xuất
+UI --> User: 6. Chuyển về auth.html hoặc index.html
+
+@enduml

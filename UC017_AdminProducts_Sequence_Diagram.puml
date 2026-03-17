@@ -1,0 +1,38 @@
+@startuml UC017_AdminProducts_Sequence_Diagram
+title UC017: Quản trị viên – Quản lý món ăn - Sequence Diagram
+
+actor "Quản trị viên" as Admin
+participant "Trang Admin (tab Món ăn)" as UI
+participant "Cloudinary" as CDN
+participant "Realtime Database" as DB
+
+Admin -> UI: 1. Mở tab Món ăn
+UI -> DB: Tải products (phân trang)
+DB --> UI: Danh sách món
+UI --> Admin: Hiển thị bảng, nút Sửa, Xóa
+
+alt Thêm món
+  Admin -> UI: 2a. Bấm Thêm món ăn, nhập tên, ảnh, giá/cal size, topping, mô tả, danh mục, Lưu
+  UI -> CDN: Upload ảnh
+  alt Upload thành công
+    CDN --> UI: URL ảnh
+    UI -> DB: Tạo product + product_details
+    DB --> UI: Đã tạo
+    UI --> Admin: Thông báo thành công, cập nhật bảng
+  else Upload lỗi
+    CDN --> UI: Lỗi
+    UI --> Admin: Thông báo lỗi upload
+  end
+else Sửa món
+  Admin -> UI: 2b. Bấm Sửa, chỉnh sửa modal, Lưu
+  UI -> DB: Cập nhật product (ảnh mới thì upload Cloudinary trước)
+  DB --> UI: Đã cập nhật
+  UI --> Admin: Cập nhật bảng
+else Xóa món
+  Admin -> UI: 2c. Bấm Xóa, xác nhận
+  UI -> DB: Xóa product và product_details
+  DB --> UI: Đã xóa
+  UI --> Admin: Cập nhật bảng
+end
+
+@enduml

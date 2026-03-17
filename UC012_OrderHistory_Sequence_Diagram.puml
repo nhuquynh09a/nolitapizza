@@ -1,0 +1,28 @@
+@startuml UC012_OrderHistory_Sequence_Diagram
+title UC012: Xem lịch sử đơn hàng và hủy đơn - Sequence Diagram
+
+actor "Người dùng" as User
+participant "Trang Tài khoản (tab Đơn hàng của tôi)" as UI
+participant "Realtime Database" as DB
+
+User -> UI: 1. Mở tab Đơn hàng của tôi
+UI -> DB: 2. Tải đơn theo user (orders)
+DB --> UI: Danh sách đơn
+UI --> User: 3. Hiển thị Mã đơn, Ngày, Tổng tiền,\nTrạng thái, nút Xem, Hủy (nếu được phép)
+
+alt Người dùng bấm Xem
+  User -> UI: Xem chi tiết đơn
+  UI --> User: Hiển thị chi tiết đơn
+else Người dùng bấm Hủy
+  User -> UI: Hủy đơn (nhập lý do, xác nhận)
+  UI -> DB: 4. Cập nhật đơn: status = cancelled,\ncancel_reason, cancelled_at
+  alt Cập nhật thành công
+    DB --> UI: Đã cập nhật
+    UI --> User: Thông báo đã hủy đơn
+  else Đơn không được phép hủy / lỗi Firebase
+    DB --> UI: Lỗi hoặc từ chối
+    UI --> User: Thông báo không hủy được
+  end
+end
+
+@enduml

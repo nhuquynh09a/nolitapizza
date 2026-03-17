@@ -1,23 +1,23 @@
 @startuml UC001_Login_Sequence_Diagram
 title UC001: Đăng nhập - Sequence Diagram
 
-actor "Người dùng" as User
-participant "Giao diện đăng nhập" as UI
-participant "Firebase Authentication" as Auth
-participant "Realtime Database" as DB
+actor "Người dùng vãng lai, Người dùng, Quản trị viên" as User
+participant "Trang Đăng nhập" as UI
+participant "Hệ thống xác thực Firebase Authentication" as Auth
 
-User -> UI: 1. Truy cập trang đăng nhập
-User -> UI: 2. Chọn cách đăng nhập (email/Google), nhập thông tin
-UI -> Auth: 3. Gửi thông tin xác thực
-Auth -> DB: 4. Kiểm tra tài khoản, lấy role
-DB --> Auth: 5. Kết quả xác thực + profile
+User -> UI: Truy cập trang đăng nhập
+UI --> User: Hiển thị form đăng nhập
 
-alt Đăng nhập thành công
-  Auth --> UI: Xác thực thành công
-  UI --> User: Chuyển hướng đến trang theo role
-else Thông tin không hợp lệ
-  Auth --> UI: Xác thực thất bại
-  UI --> User: Hiển thị thông báo lỗi
+User -> UI: Nhập email/mật khẩu hoặc chọn đăng nhập Google
+UI -> Auth: Gửi thông tin đăng nhập
+Auth --> Auth: Xác thực thông tin
+
+alt Nhập thành công
+  Auth --> UI: Thông báo đăng nhập thành công
+  UI --> User: Chuyển đến trang chính / trang theo role
+else Thông tin không chính xác
+  Auth --> UI: Thông báo lỗi
+  UI --> User: Hiển thị \"Thông tin đăng nhập không chính xác\"
 end
 
 @enduml

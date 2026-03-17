@@ -1,0 +1,23 @@
+@startuml UC023_Kitchen_Sequence_Diagram
+title UC023: Bếp – Xem đơn cần chế biến và cập nhật trạng thái - Sequence Diagram
+
+actor "Nhân viên bếp" as Kitchen
+participant "Trang Bếp (kitchen-account.html)" as UI
+participant "Realtime Database" as DB
+
+Kitchen -> UI: 1. Truy cập trang Bếp
+UI -> DB: Tải đơn status = ready
+DB --> UI: Danh sách đơn
+UI --> Kitchen: Hiển thị đơn cần chế biến
+
+Kitchen -> UI: 2. Đang chế biến (kitchen_status = cooking) / 3. Đã xong (kitchen_status = done)
+UI -> DB: updateOrder(kitchen_status)
+alt Thành công
+  DB --> UI: Đã cập nhật
+  UI --> Kitchen: Cập nhật hiển thị (admin/Giao hàng thấy realtime)
+else Chưa đăng nhập / role khác / lỗi Firebase
+  DB --> UI: Lỗi
+  UI --> Kitchen: Chuyển index/auth hoặc thông báo
+end
+
+@enduml

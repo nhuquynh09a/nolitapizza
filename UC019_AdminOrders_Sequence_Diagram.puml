@@ -1,0 +1,23 @@
+@startuml UC019_AdminOrders_Sequence_Diagram
+title UC019: Quản trị viên – Quản lý đơn hàng - Sequence Diagram
+
+actor "Quản trị viên" as Admin
+participant "Trang Admin (tab Đơn hàng)" as UI
+participant "Realtime Database" as DB
+
+Admin -> UI: 1. Mở tab Đơn hàng
+UI -> DB: 2. subscribeOrders (phân trang, lọc trạng thái)
+DB --> UI: Danh sách đơn
+UI --> Admin: Hiển thị bảng đơn
+
+Admin -> UI: 3. Xem chi tiết / Duyệt / Gửi bếp / Gửi ship / Đã giao / Hủy (lý do) / Xác nhận VietQR
+UI -> DB: 4. updateOrder
+alt Thành công
+  DB --> UI: Đã cập nhật
+  UI --> Admin: Cập nhật bảng (realtime)
+else Đơn không tồn tại / lỗi
+  DB --> UI: Lỗi
+  UI --> Admin: Thông báo
+end
+
+@enduml

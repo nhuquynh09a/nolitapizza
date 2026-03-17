@@ -1,0 +1,24 @@
+@startuml UC010_Profile_Sequence_Diagram
+title UC010: Xem và cập nhật thông tin cá nhân - Sequence Diagram
+
+actor "Người dùng" as User
+participant "Trang Tài khoản (user-account.html)" as UI
+participant "Realtime Database" as DB
+
+User -> UI: 1. Mở tab Thông tin cá nhân
+UI -> DB: 2. Tải profile (users/{uid})
+DB --> UI: Dữ liệu profile
+UI --> User: 3. Hiển thị họ tên, email, SĐT, địa chỉ
+
+User -> UI: 4. Bấm Chỉnh sửa, sửa các trường, bấm Lưu
+UI -> DB: 5. Cập nhật profile (saveUserProfile)
+
+alt Lưu thành công
+  DB --> UI: Đã cập nhật
+  UI --> User: Thông báo lưu thành công
+else Lỗi Firebase
+  DB --> UI: Lỗi
+  UI --> User: Thông báo không lưu được
+end
+
+@enduml

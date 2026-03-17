@@ -1,0 +1,23 @@
+@startuml UC022_AdminReviews_Sequence_Diagram
+title UC022: Quản trị viên – Quản lý đánh giá - Sequence Diagram
+
+actor "Quản trị viên" as Admin
+participant "Trang Admin (tab Đánh giá)" as UI
+participant "Realtime Database" as DB
+
+Admin -> UI: 1. Mở tab Đánh giá
+UI -> DB: Tải reviews
+DB --> UI: Danh sách đánh giá
+UI --> Admin: Hiển thị bảng
+
+Admin -> UI: 2. Bấm Xóa trên đánh giá, xác nhận (deleteReview)
+UI -> DB: deleteReview
+alt Thành công
+  DB --> UI: Đã xóa
+  UI --> Admin: Cập nhật bảng
+else Lỗi Firebase
+  DB --> UI: Lỗi
+  UI --> Admin: Thông báo
+end
+
+@enduml

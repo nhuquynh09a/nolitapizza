@@ -149,8 +149,10 @@ function initAdmin() {
   const ADMIN_PAGE_SIZE = 12;
   let ordersCurrentPage = 1;
   let foodsCurrentPage = 1;
+  let usersCurrentPage = 1;
   let currentOrdersList = [];
   let currentFoodsList = [];
+  let currentUsersList = [];
 
   async function loadDashboardStats() {
     const revenueEl = document.getElementById('dashboardRevenue');
@@ -374,12 +376,19 @@ function initAdmin() {
     try {
       tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;">Đang tải...</td></tr>';
       const users = await getUsersList();
+      currentUsersList = Array.isArray(users) ? users : [];
       tbody.innerHTML = '';
-      if (users.length === 0) {
+      if (currentUsersList.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;">Chưa có người dùng</td></tr>';
+        const paginationEl = document.getElementById('usersPagination');
+        if (paginationEl) paginationEl.innerHTML = '';
         return;
       }
-      users.forEach(u => {
+      const totalPagesUsers = Math.ceil(currentUsersList.length / ADMIN_PAGE_SIZE);
+      usersCurrentPage = Math.max(1, Math.min(usersCurrentPage, totalPagesUsers));
+      const pageList = currentUsersList.slice((usersCurrentPage - 1) * ADMIN_PAGE_SIZE, usersCurrentPage * ADMIN_PAGE_SIZE);
+
+      pageList.forEach(u => {
         const tr = document.createElement('tr');
         const ts = u.created_at;
         const created = ts != null
@@ -414,6 +423,27 @@ function initAdmin() {
           }
         });
       });
+
+      const paginationEl = document.getElementById('usersPagination');
+      if (paginationEl) {
+        if (totalPagesUsers <= 1) {
+          paginationEl.innerHTML = '';
+        } else {
+          paginationEl.innerHTML = `
+            <span class="admin-pagination-info">Trang ${usersCurrentPage} / ${totalPagesUsers}</span>
+            <div class="admin-pagination-btns">
+              <button type="button" class="btn btn-sm btn-outline admin-pagination-prev" ${usersCurrentPage <= 1 ? 'disabled' : ''}>Trước</button>
+              <button type="button" class="btn btn-sm btn-outline admin-pagination-next" ${usersCurrentPage >= totalPagesUsers ? 'disabled' : ''}>Sau</button>
+            </div>
+          `;
+          paginationEl.querySelector('.admin-pagination-prev')?.addEventListener('click', () => {
+            if (usersCurrentPage > 1) { usersCurrentPage--; renderUsersTable(); }
+          });
+          paginationEl.querySelector('.admin-pagination-next')?.addEventListener('click', () => {
+            if (usersCurrentPage < totalPagesUsers) { usersCurrentPage++; renderUsersTable(); }
+          });
+        }
+      }
     } catch (err) {
       console.error('renderUsersTable:', err);
       const msg = (err && err.message) || String(err);
@@ -424,6 +454,8 @@ function initAdmin() {
           ? 'Lỗi quyền truy cập: Admin cần quyền đọc node <code>users</code> trong Firebase.' + uidInfo + ' Rules: node <code>users</code> cần có <code>.read": "auth != null && root.child(\'users\').child(auth.uid).child(\'role\').val() === \'admin\'"</code>'
           : 'Lỗi tải dữ liệu: ' + msg)
         + '</td></tr>';
+      const paginationEl = document.getElementById('usersPagination');
+      if (paginationEl) paginationEl.innerHTML = '';
     }
   }
 
@@ -485,28 +517,29 @@ function initAdmin() {
     const tbody = document.getElementById('contactsTbody');
     if (!tbody) return;
     try {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#888;">Đang tải...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;">Đang tải...</td></tr>';
       const list = await getContacts();
       tbody.innerHTML = '';
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#888;">Chưa có liên hệ</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;">Chưa có liên hệ</td></tr>';
         return;
       }
       list.forEach(c => {
         const tr = document.createElement('tr');
-        const msg = (c.message || '').slice(0, 50) + ((c.message || '').length > 50 ? '…' : '');
-        const date = c.created_at ? new Date(c.created_at).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+        const date = c.created_at
+          ? new Date(c.created_at).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+          : '—';
+        const statusRaw = (c.status || '').toLowerCase();
+        const normalizedStatus = (statusRaw === 'read' || statusRaw === 'đã đọc') ? 'read' : 'unread';
+        const statusText = normalizedStatus === 'read' ? 'Đã đọc' : 'Chưa đọc';
         tr.innerHTML = `
           <td>${c.full_name || '—'}</td>
           <td>${c.email || '—'}</td>
-          <td>${c.phone || '—'}</td>
           <td>${c.subject || '—'}</td>
-          <td title="${(c.message || '').replace(/"/g, '&quot;')}">${msg}</td>
           <td class="admin-contact-date">${date}</td>
-          <td>${c.status || 'new'}</td>
+          <td>${statusText}</td>
           <td class="admin-food-actions">
-            <button type="button" class="btn btn-sm admin-btn-edit btn-view-contact" data-id="${c.id}">Chi tiết</button>
-            <button type="button" class="btn btn-sm admin-btn-edit btn-edit-contact" data-id="${c.id}">Sửa</button>
+            <button type="button" class="btn btn-sm admin-btn-edit btn-view-contact" data-id="${c.id}">Xem chi tiết</button>
             <button type="button" class="btn btn-sm admin-btn-delete btn-delete-contact" data-id="${c.id}">Xóa</button>
           </td>
         `;
@@ -514,9 +547,6 @@ function initAdmin() {
       });
       tbody.querySelectorAll('.btn-view-contact').forEach(btn => {
         btn.addEventListener('click', () => openViewContactModal(btn.getAttribute('data-id')));
-      });
-      tbody.querySelectorAll('.btn-edit-contact').forEach(btn => {
-        btn.addEventListener('click', () => openEditContactModal(btn.getAttribute('data-id')));
       });
       tbody.querySelectorAll('.btn-delete-contact').forEach(btn => {
         btn.addEventListener('click', async () => {
@@ -532,7 +562,7 @@ function initAdmin() {
       });
     } catch (err) {
       console.error('renderContactsTable:', err);
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#c00;">Lỗi tải dữ liệu</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#c00;">Lỗi tải dữ liệu</td></tr>';
     }
   }
 
@@ -540,82 +570,49 @@ function initAdmin() {
     getContacts().then(list => {
       const c = list.find(x => x.id === id);
       if (!c) return alert('Không tìm thấy liên hệ.');
-      const dateFull = c.created_at ? new Date(c.created_at).toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' }) : '—';
-      const statusText = { new: 'Mới', read: 'Đã đọc', replied: 'Đã phản hồi' }[c.status || 'new'] || c.status;
+      const statusRaw = (c.status || '').toLowerCase();
+      const normalizedStatus = (statusRaw === 'read' || statusRaw === 'đã đọc') ? 'read' : 'unread';
       const body = `
-        <div class="admin-order-detail">
-          <p><strong>Họ tên:</strong> ${(c.full_name || '—').replace(/</g, '&lt;')}</p>
-          <p><strong>Email:</strong> ${(c.email || '—').replace(/</g, '&lt;')}</p>
-          <p><strong>Điện thoại:</strong> ${(c.phone || '—').replace(/</g, '&lt;')}</p>
-          <p><strong>Tiêu đề:</strong> ${(c.subject || '—').replace(/</g, '&lt;')}</p>
-          <p><strong>Ngày gửi:</strong> ${dateFull}</p>
-          <p><strong>Trạng thái:</strong> ${statusText}</p>
-          <p><strong>Nội dung:</strong></p>
-          <div style="background:rgba(255,255,255,0.05);padding:12px;border-radius:8px;margin-top:6px;white-space:pre-wrap;word-break:break-word;">${(c.message || '—').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+        <div class="admin-form-group">
+          <label>Người gửi</label>
+          <input type="text" value="${(c.full_name || '').replace(/"/g, '&quot;')}" readonly />
+        </div>
+        <div class="admin-form-group">
+          <label>Email</label>
+          <input type="email" value="${(c.email || '').replace(/"/g, '&quot;')}" readonly />
+        </div>
+        <div class="admin-form-group">
+          <label>Tiêu đề</label>
+          <input type="text" value="${(c.subject || '').replace(/"/g, '&quot;')}" readonly />
+        </div>
+        <div class="admin-form-group">
+          <label>Nội dung</label>
+          <textarea rows="5" readonly>${(c.message || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
+        </div>
+        <div class="admin-form-group">
+          <label>Trạng thái</label>
+          <select id="modalContactStatus">
+            <option value="unread" ${normalizedStatus === 'unread' ? 'selected' : ''}>Chưa đọc</option>
+            <option value="read" ${normalizedStatus === 'read' ? 'selected' : ''}>Đã đọc</option>
+          </select>
         </div>
       `;
-      const footer = `<button type="button" class="btn btn-primary" id="modalContactViewClose">Đóng</button>`;
+      const footer = `
+        <button type="button" class="btn btn-primary" id="modalContactUpdate">Cập nhật</button>
+        <button type="button" class="btn btn-outline" id="modalContactClose">Đóng</button>
+      `;
       openModal('Chi tiết liên hệ', body, footer);
-      document.getElementById('modalContactViewClose').addEventListener('click', closeModal);
-    });
-  }
-
-  async function openEditContactModal(id) {
-    const list = await getContacts();
-    const c = list.find(x => x.id === id);
-    if (!c) return alert('Không tìm thấy liên hệ.');
-    const body = `
-      <div class="admin-form-group">
-        <label>Họ tên</label>
-        <input type="text" id="modalContactName" value="${(c.full_name || '').replace(/"/g, '&quot;')}" />
-      </div>
-      <div class="admin-form-group">
-        <label>Email</label>
-        <input type="email" id="modalContactEmail" value="${(c.email || '').replace(/"/g, '&quot;')}" />
-      </div>
-      <div class="admin-form-group">
-        <label>Điện thoại</label>
-        <input type="text" id="modalContactPhone" value="${(c.phone || '').replace(/"/g, '&quot;')}" />
-      </div>
-      <div class="admin-form-group">
-        <label>Tiêu đề</label>
-        <input type="text" id="modalContactSubject" value="${(c.subject || '').replace(/"/g, '&quot;')}" />
-      </div>
-      <div class="admin-form-group">
-        <label>Nội dung</label>
-        <textarea id="modalContactMessage" rows="4">${(c.message || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</textarea>
-      </div>
-      <div class="admin-form-group">
-        <label>Trạng thái</label>
-        <select id="modalContactStatus">
-          <option value="new" ${(c.status || '') === 'new' ? 'selected' : ''}>Mới</option>
-          <option value="read" ${(c.status || '') === 'read' ? 'selected' : ''}>Đã đọc</option>
-          <option value="replied" ${(c.status || '') === 'replied' ? 'selected' : ''}>Đã phản hồi</option>
-        </select>
-      </div>
-    `;
-    const footer = `
-      <button type="button" class="btn btn-outline" id="modalContactCancel">Hủy</button>
-      <button type="button" class="btn btn-primary" id="modalContactSave">Lưu</button>
-    `;
-    openModal('Sửa liên hệ', body, footer);
-    document.getElementById('modalContactCancel').addEventListener('click', closeModal);
-    document.getElementById('modalContactSave').addEventListener('click', async () => {
-      try {
-        await updateContact(id, {
-          full_name: document.getElementById('modalContactName').value.trim(),
-          email: document.getElementById('modalContactEmail').value.trim(),
-          phone: document.getElementById('modalContactPhone').value.trim(),
-          subject: document.getElementById('modalContactSubject').value.trim(),
-          message: document.getElementById('modalContactMessage').value.trim(),
-          status: document.getElementById('modalContactStatus').value
-        });
-        alert('Đã cập nhật.');
-        closeModal();
-        await renderContactsTable();
-      } catch (err) {
-        alert('Lỗi: ' + (err?.message || err));
-      }
+      document.getElementById('modalContactClose').addEventListener('click', closeModal);
+      document.getElementById('modalContactUpdate').addEventListener('click', async () => {
+        try {
+          const status = document.getElementById('modalContactStatus').value;
+          await updateContact(id, { status: status === 'read' ? 'read' : 'unread' });
+          closeModal();
+          await renderContactsTable();
+        } catch (err) {
+          alert('Lỗi: ' + (err?.message || err));
+        }
+      });
     });
   }
 
@@ -625,7 +622,12 @@ function initAdmin() {
     if (!tbody) return;
     try {
       tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;">Đang tải...</td></tr>';
-      const list = await getReviews();
+      const [list, users] = await Promise.all([getReviews(), getUsersList().catch(() => [])]);
+      const userNameByUid = new Map(
+        (Array.isArray(users) ? users : [])
+          .filter(u => u && u.uid)
+          .map(u => [String(u.uid), (u.full_name || u.email || '').trim()])
+      );
       tbody.innerHTML = '';
       if (list.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;">Chưa có đánh giá</td></tr>';
@@ -635,8 +637,14 @@ function initAdmin() {
         const tr = document.createElement('tr');
         const date = r.created_at ? new Date(r.created_at).toLocaleString('vi-VN') : '—';
         const stars = r.rating ?? r.stars ?? '—';
+        const uid = r.user_id || r.uid || '';
+        const displayName =
+          (r.user_name && String(r.user_name).trim())
+          || userNameByUid.get(String(uid))
+          || uid
+          || '—';
         tr.innerHTML = `
-          <td>${r.user_name || r.user_id || '—'}</td>
+          <td>${String(displayName).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</td>
           <td>${stars}</td>
           <td>${(r.content || '').slice(0, 60)}${(r.content || '').length > 60 ? '…' : ''}</td>
           <td>${date}</td>
@@ -1350,46 +1358,12 @@ function initAdmin() {
     if (e.key === 'Escape' && backdrop.getAttribute('aria-hidden') === 'false') closeModal();
   });
 
-  // --- Thêm người dùng ---
+  // --- Users: tải lại ---
   const btnRefreshUsers = document.getElementById('btnRefreshUsers');
   if (btnRefreshUsers) {
     btnRefreshUsers.addEventListener('click', () => {
+      usersCurrentPage = 1;
       renderUsersTable();
-    });
-  }
-
-  const btnAddUser = document.getElementById('btnAddUser');
-  if (btnAddUser) {
-    btnAddUser.addEventListener('click', () => {
-  const body = `
-        <div class="admin-form-group">
-          <label for="modalUserEmail">Email</label>
-          <input type="email" id="modalUserEmail" placeholder="email@example.com" />
-        </div>
-        <div class="admin-form-group">
-          <label for="modalUserFullName">Họ tên</label>
-          <input type="text" id="modalUserFullName" placeholder="Nguyễn Văn A" />
-        </div>
-        <p class="admin-form-group" style="font-size:0.85rem;color:var(--text-gray);margin-bottom:0;">Ngày tạo sẽ tự động cập nhật khi lưu.</p>
-      `;
-      const footer = `
-        <button type="button" class="btn btn-outline" id="modalUserCancel">Hủy</button>
-        <button type="button" class="btn btn-primary" id="modalUserSave">Lưu</button>
-      `;
-      openModal('Thêm người dùng', body, footer);
-      document.getElementById('modalUserCancel').addEventListener('click', closeModal);
-      document.getElementById('modalUserSave').addEventListener('click', () => {
-        const email = document.getElementById('modalUserEmail').value.trim();
-        const fullName = document.getElementById('modalUserFullName').value.trim();
-        if (!email || !fullName) {
-          alert('Vui lòng nhập đủ Email và Họ tên.');
-          return;
-        }
-        const created_at = new Date().toISOString();
-        console.log('Thêm user:', { email, fullName, created_at });
-        alert('Đã lưu (chưa kết nối Firebase). Ngày tạo: ' + created_at);
-        closeModal();
-      });
     });
   }
 

@@ -1,0 +1,30 @@
+@startuml UC008_Order_Sequence_Diagram
+title UC008: Xem giỏ hàng và đặt món - Sequence Diagram
+
+actor "Người dùng" as User
+participant "Trang Đặt Món (order.html)" as UI
+participant "LocalStorage" as LS
+participant "Realtime Database" as DB
+
+User -> UI: 1. Truy cập trang Đặt Món
+UI -> LS: 2. Đọc cartItems
+LS --> UI: Danh sách món trong giỏ
+UI --> User: 3. Hiển thị danh sách món, tổng tiền\n(sửa số lượng, xóa món nếu cần)
+
+User -> UI: 4. Nhập Họ tên, SĐT, Email, Địa chỉ, Ghi chú\nChọn COD hoặc VietQR, bấm Đặt hàng
+UI -> DB: 5. Kiểm tra thông tin, tạo đơn (orders)\nstatus pending
+
+alt Đơn tạo thành công
+  DB --> UI: Đơn đã tạo
+  alt Thanh toán COD
+    UI -> LS: Xóa cartItems
+    UI --> User: Thông báo thành công
+  else Thanh toán VietQR
+    UI --> User: Chuyển payment.html?order_id=...
+  end
+else Giỏ trống / thiếu thông tin / lỗi Firebase
+  DB --> UI: Lỗi hoặc từ chối
+  UI --> User: Thông báo lỗi, không tạo đơn
+end
+
+@enduml

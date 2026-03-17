@@ -1,0 +1,20 @@
+@startuml UC013_Review_Sequence_Diagram
+title UC013: Viết đánh giá món - Sequence Diagram
+
+actor "Người dùng" as User
+participant "Trang Tài khoản (tab Đánh giá của tôi)" as UI
+participant "Realtime Database" as DB
+
+User -> UI: 1. Mở tab Đánh giá của tôi
+User -> UI: 2. Chọn món/đơn, nhập nội dung và số sao,\nbấm Gửi
+UI -> DB: 3. Lưu đánh giá (reviews)
+
+alt Lưu thành công
+  DB --> UI: Đã lưu
+  UI --> User: Thông báo đã gửi đánh giá
+else Nội dung trống / lỗi Firebase
+  DB --> UI: Lỗi hoặc validation
+  UI --> User: Thông báo lỗi
+end
+
+@enduml

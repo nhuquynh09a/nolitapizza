@@ -1,0 +1,19 @@
+@startuml UC007_AddToCart_Sequence_Diagram
+title UC007: Thêm món vào giỏ hàng - Sequence Diagram
+
+actor "Người dùng" as User
+participant "Trang Món ăn / Chi tiết món" as UI
+participant "LocalStorage" as LS
+
+User -> UI: 1. Chọn món, size/topping (nếu có)\nvà bấm \"Thêm vào giỏ\"
+UI -> LS: 2. Cập nhật cartItems\n(thêm mới hoặc tăng số lượng)
+
+alt Lưu thành công
+  LS --> UI: Đã lưu
+  UI --> User: 3. Cập nhật số giỏ trên header\n+ thông báo thêm thành công
+else localStorage đầy/bị chặn hoặc món hết hàng
+  LS --> UI: Lỗi / không lưu được
+  UI --> User: Không thêm được;\nmón hết hàng thì nút vô hiệu
+end
+
+@enduml

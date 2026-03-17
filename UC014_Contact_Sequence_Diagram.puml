@@ -1,0 +1,21 @@
+@startuml UC014_Contact_Sequence_Diagram
+title UC014: Gửi liên hệ / góp ý - Sequence Diagram
+
+actor "Người dùng" as User
+participant "Trang Liên hệ (contact.html)" as UI
+participant "Realtime Database" as DB
+
+User -> UI: 1. Truy cập trang Liên hệ, điền form\n(họ tên, email, SĐT, tiêu đề, nội dung)
+User -> UI: 2. Bấm Gửi
+UI -> UI: 3. Kiểm tra validation
+UI -> DB: 4. Lưu tin nhắn (contacts)
+
+alt Lưu thành công
+  DB --> UI: Đã lưu
+  UI --> User: Thông báo gửi thành công
+else Dữ liệu không hợp lệ / lỗi Firebase
+  DB --> UI: Lỗi
+  UI --> User: Thông báo lỗi
+end
+
+@enduml

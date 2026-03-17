@@ -122,9 +122,6 @@
           </div>
           <div style="display:flex;gap:8px;">
             <button type="button" id="btnRefreshUsers" class="btn btn-outline admin-section-btn">Tải lại</button>
-            <button type="button" id="btnAddUser" class="btn btn-primary admin-section-btn">
-              Thêm người dùng
-            </button>
           </div>
         </div>
 
@@ -154,6 +151,7 @@
               </tbody>
             </table>
           </div>
+          <div id="usersPagination" class="admin-pagination"></div>
         </div>
       </section>
 
@@ -246,9 +244,9 @@
       <section id="contacts" class="admin-section" style="display:none">
         <div class="admin-section-header">
           <div>
-            <h2 class="admin-section-title">Quản lý liên hệ</h2>
+            <h2 class="admin-section-title">Danh sách liên hệ</h2>
             <p class="admin-section-subtitle">
-              Tin nhắn liên hệ từ khách hàng. Sửa trạng thái hoặc xóa.
+              Tin nhắn liên hệ từ khách hàng. Xem chi tiết hoặc xóa.
             </p>
           </div>
         </div>
@@ -257,14 +255,12 @@
             <table class="admin-table">
               <thead>
                 <tr>
-                  <th>Họ tên</th>
+                  <th>Người gửi</th>
                   <th>Email</th>
-                  <th>Điện thoại</th>
                   <th>Tiêu đề</th>
-                  <th>Nội dung</th>
-                  <th>Ngày</th>
+                  <th>Ngày gửi</th>
                   <th>Trạng thái</th>
-                  <th></th>
+                  <th>Thao tác</th>
                 </tr>
               </thead>
               <tbody id="contactsTbody"></tbody>

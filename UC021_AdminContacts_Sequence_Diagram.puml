@@ -1,0 +1,25 @@
+@startuml UC021_AdminContacts_Sequence_Diagram
+title UC021: Quản trị viên – Quản lý liên hệ - Sequence Diagram
+
+actor "Quản trị viên" as Admin
+participant "Trang Admin (tab Liên hệ)" as UI
+participant "Realtime Database" as DB
+
+Admin -> UI: 1. Mở tab Liên hệ
+UI -> DB: Tải contacts
+DB --> UI: Danh sách tin nhắn
+UI --> Admin: Hiển thị bảng
+
+alt Cập nhật trạng thái hoặc Xóa
+  Admin -> UI: 2. updateContact (trạng thái) hoặc deleteContact
+  UI -> DB: updateContact / deleteContact
+  alt Thành công
+    DB --> UI: Đã cập nhật / đã xóa
+    UI --> Admin: Cập nhật bảng
+  else Lỗi Firebase
+    DB --> UI: Lỗi
+    UI --> Admin: Thông báo
+  end
+end
+
+@enduml

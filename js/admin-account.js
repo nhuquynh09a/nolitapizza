@@ -144,15 +144,57 @@ function initAdmin() {
     `;
   }
 
+  function escapeHtml(str) {
+    return String(str ?? '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
+  function renderTopSellingPieChart(items) {
+    if (!items || items.length === 0) {
+      return '<p class="admin-chart-empty">Chưa có dữ liệu món bán chạy.</p>';
+    }
+    const top = items.slice(0, 6);
+    const total = top.reduce((sum, i) => sum + (Number(i.value) || 0), 0) || 1;
+    const colors = ['#ff7a00', '#ffb347', '#ffcc80', '#ff6f61', '#ffa726', '#ffd180'];
+    let cur = 0;
+    const gradientParts = top.map((it, idx) => {
+      const val = Number(it.value) || 0;
+      const start = (cur / total) * 360;
+      cur += val;
+      const end = (cur / total) * 360;
+      return `${colors[idx % colors.length]} ${start.toFixed(2)}deg ${end.toFixed(2)}deg`;
+    });
+    const legend = top.map((it, idx) => {
+      const percent = ((Number(it.value) || 0) * 100 / total).toFixed(1);
+      return `<li><span class="admin-pie-dot" style="background:${colors[idx % colors.length]}"></span>${escapeHtml(it.label)} - ${it.value} (${percent}%)</li>`;
+    }).join('');
+    return `
+      <div class="admin-pie-wrap">
+        <div class="admin-pie" style="background: conic-gradient(${gradientParts.join(', ')});"></div>
+        <ul class="admin-pie-legend">${legend}</ul>
+      </div>
+    `;
+  }
+
   // ----- Dashboard: doanh thu (chỉ đơn đã giao), người dùng mới, món ăn mới -----
   let cachedOrders = [];
   const ADMIN_PAGE_SIZE = 12;
   let ordersCurrentPage = 1;
   let foodsCurrentPage = 1;
   let usersCurrentPage = 1;
+  let ordersCustomRangeStart = null; // YYYY-MM-DD
+  let ordersCustomRangeEnd = null;   // YYYY-MM-DD
+  let lastOrdersPeriod = 'all';
   let currentOrdersList = [];
   let currentFoodsList = [];
   let currentUsersList = [];
+  let customRangeStart = null; // YYYY-MM-DD
+  let customRangeEnd = null;   // YYYY-MM-DD
+  let lastDashboardPeriod = 'today';
 
   async function loadDashboardStats() {
     const revenueEl = document.getElementById('dashboardRevenue');
@@ -161,6 +203,8 @@ function initAdmin() {
     const revenueOnlineEl = document.getElementById('dashboardRevenueOnline');
     const dailyChartEl = document.getElementById('dashboardRevenueDailyChart');
     const monthlyChartEl = document.getElementById('dashboardRevenueMonthlyChart');
+    const hourlyChartEl = document.getElementById('dashboardHourlyConsumptionChart');
+    const topSellingPieEl = document.getElementById('dashboardTopSellingPieChart');
     const newUsersEl = document.getElementById('dashboardNewUsers');
     const newProductsEl = document.getElementById('dashboardNewProducts');
     const periodSelect = document.getElementById('dashboardPeriod');
@@ -169,20 +213,26 @@ function initAdmin() {
     const now = new Date();
     const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     let startDate;
+    let endDate = new Date(now);
     if (period === 'today') startDate = todayStart;
     else if (period === '7') { startDate = new Date(todayStart); startDate.setDate(startDate.getDate() - 7); }
     else if (period === '30') { startDate = new Date(todayStart); startDate.setDate(startDate.getDate() - 30); }
+    else if (period === 'custom' && customRangeStart && customRangeEnd) {
+      startDate = new Date(customRangeStart + 'T00:00:00');
+      endDate = new Date(customRangeEnd + 'T23:59:59.999');
+    }
     else startDate = todayStart;
     const startTime = startDate.getTime();
+    const endTime = endDate.getTime();
     try {
       const [users, products, orders] = await Promise.all([getUsersList(), getProducts(), getOrders()]);
       const newUsersCount = users.filter(u => {
         const t = u.created_at ? new Date(u.created_at).getTime() : 0;
-        return t >= startTime;
+        return t >= startTime && t <= endTime;
       }).length;
       const newProductsCount = products.filter(p => {
         const t = p.created_at ? new Date(p.created_at).getTime() : 0;
-        return t >= startTime;
+        return t >= startTime && t <= endTime;
       }).length;
       // Doanh thu: đơn đã giao (completed) HOẶC đơn VietQR đã xác nhận chuyển khoản (tính ngay khi admin xác nhận)
       const completedOrders = orders.filter(o => (o.status || '') === 'completed');
@@ -196,7 +246,8 @@ function initAdmin() {
       const revenueOrders = revenueEligibleOrders.filter(o => {
         const completedAt = o.completed_at || o.order_date || o.created_at;
         if (!completedAt) return false;
-        return new Date(completedAt).getTime() >= startTime;
+        const t = new Date(completedAt).getTime();
+        return t >= startTime && t <= endTime;
       });
       const totalRevenue = revenueOrders.reduce((sum, o) => sum + (Number(o.total_price) || 0), 0);
       const fmt = (n) => new Intl.NumberFormat('vi-VN').format(n) + ' ₫';
@@ -239,6 +290,40 @@ function initAdmin() {
         const monthlyPoints = slicedMonths.map(k => ({ label: k.slice(5) + '/' + k.slice(2, 4), value: byMonth[k] }));
         monthlyChartEl.innerHTML = renderBarChartSvg(monthlyPoints);
       }
+
+      if (hourlyChartEl || topSellingPieEl) {
+        const hourBuckets = {};
+        for (let h = 8; h <= 21; h++) hourBuckets[h] = 0;
+        const itemBuckets = {};
+        revenueOrders.forEach(o => {
+          const orderTime = new Date(o.completed_at || o.order_date || o.created_at);
+          const hour = orderTime.getHours();
+          const items = Array.isArray(o.items) ? o.items : [];
+          let orderQty = 0;
+          items.forEach(it => {
+            const qty = Number(it.quantity ?? it.qty ?? 1) || 1;
+            orderQty += qty;
+            const name = (it.name || it.product_name || 'Món khác').trim();
+            itemBuckets[name] = (itemBuckets[name] || 0) + qty;
+          });
+          if (hour >= 8 && hour <= 21) hourBuckets[hour] += orderQty;
+        });
+
+        if (hourlyChartEl) {
+          const hourlyPoints = Object.keys(hourBuckets).map(h => ({
+            label: String(h).padStart(2, '0'),
+            value: hourBuckets[h]
+          }));
+          hourlyChartEl.innerHTML = renderBarChartSvg(hourlyPoints);
+        }
+
+        if (topSellingPieEl) {
+          const topSelling = Object.entries(itemBuckets)
+            .map(([label, value]) => ({ label, value }))
+            .sort((a, b) => b.value - a.value);
+          topSellingPieEl.innerHTML = renderTopSellingPieChart(topSelling);
+        }
+      }
     } catch (err) {
       console.error('loadDashboardStats:', err);
       if (revenueEl) revenueEl.textContent = '—';
@@ -247,9 +332,64 @@ function initAdmin() {
       if (revenueOnlineEl) revenueOnlineEl.textContent = '—';
       if (newUsersEl) newUsersEl.textContent = '—';
       if (newProductsEl) newProductsEl.textContent = '—';
+      if (hourlyChartEl) hourlyChartEl.innerHTML = '<p class="admin-chart-empty">Không tải được dữ liệu tiêu thụ theo giờ.</p>';
+      if (topSellingPieEl) topSellingPieEl.innerHTML = '<p class="admin-chart-empty">Không tải được dữ liệu món bán chạy.</p>';
     }
   }
-  document.getElementById('dashboardPeriod')?.addEventListener('change', loadDashboardStats);
+  function fmtDateForInput(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function openDashboardDateRangeModal() {
+    const now = new Date();
+    const defaultTo = customRangeEnd || fmtDateForInput(now);
+    const defaultFromDate = customRangeStart ? new Date(customRangeStart + 'T00:00:00') : new Date(now.getTime() - 29 * 24 * 60 * 60 * 1000);
+    const defaultFrom = fmtDateForInput(defaultFromDate);
+    const body = `
+      <div class="admin-form-group">
+        <label for="dashboardDateFrom">Từ ngày</label>
+        <input type="date" id="dashboardDateFrom" value="${defaultFrom}" />
+      </div>
+      <div class="admin-form-group">
+        <label for="dashboardDateTo">Đến ngày</label>
+        <input type="date" id="dashboardDateTo" value="${defaultTo}" />
+      </div>
+    `;
+    const footer = `
+      <button type="button" class="btn btn-outline" id="dashboardDateCancel">Hủy</button>
+      <button type="button" class="btn btn-primary" id="dashboardDateApply">Áp dụng</button>
+    `;
+    openModal('Thiết lập ngày', body, footer);
+    document.getElementById('dashboardDateCancel')?.addEventListener('click', () => {
+      const select = document.getElementById('dashboardPeriod');
+      if (select) select.value = lastDashboardPeriod;
+      closeModal();
+    });
+    document.getElementById('dashboardDateApply')?.addEventListener('click', () => {
+      const from = document.getElementById('dashboardDateFrom')?.value;
+      const to = document.getElementById('dashboardDateTo')?.value;
+      if (!from || !to) return alert('Vui lòng chọn đủ Từ ngày và Đến ngày.');
+      if (from > to) return alert('Từ ngày phải nhỏ hơn hoặc bằng Đến ngày.');
+      customRangeStart = from;
+      customRangeEnd = to;
+      lastDashboardPeriod = 'custom';
+      closeModal();
+      loadDashboardStats();
+    });
+  }
+
+  document.getElementById('dashboardPeriod')?.addEventListener('change', (e) => {
+    const value = e.target.value;
+    if (value === 'custom') {
+      openDashboardDateRangeModal();
+      return;
+    }
+    lastDashboardPeriod = value;
+    loadDashboardStats();
+  });
   loadDashboardStats();
 
   // ===== Categories state =====
@@ -362,11 +502,15 @@ function initAdmin() {
     });
   }
   function renderFoodsCategoryFilter() {
-    const select = document.querySelector('#foods .admin-table-toolbar select');
+    const select = document.getElementById('foodsFilterCategory');
     if (!select) return;
+    const prev = select.value;
     const options = ['<option value="">Tất cả danh mục</option>']
       .concat((cachedCategories || []).map(c => `<option value="${c.category_id}">${c.name}</option>`));
     select.innerHTML = options.join('');
+    if (prev && [...select.options].some(o => o.value === String(prev))) {
+      select.value = prev;
+    }
   }
 
   // ----- Người dùng: load từ Firebase, Sửa / Xóa -----
@@ -515,10 +659,12 @@ function initAdmin() {
   // ----- Liên hệ: load, Sửa / Xóa -----
   async function renderContactsTable() {
     const tbody = document.getElementById('contactsTbody');
+    const countSummaryEl = document.getElementById('contactsCountSummary');
     if (!tbody) return;
     try {
       tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;">Đang tải...</td></tr>';
       const list = await getContacts();
+      if (countSummaryEl) countSummaryEl.textContent = `Tổng số liên hệ: ${Array.isArray(list) ? list.length : 0}`;
       tbody.innerHTML = '';
       if (list.length === 0) {
         tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#888;">Chưa có liên hệ</td></tr>';
@@ -562,6 +708,7 @@ function initAdmin() {
       });
     } catch (err) {
       console.error('renderContactsTable:', err);
+      if (countSummaryEl) countSummaryEl.textContent = 'Tổng số liên hệ: 0';
       tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#c00;">Lỗi tải dữ liệu</td></tr>';
     }
   }
@@ -619,10 +766,12 @@ function initAdmin() {
   // ----- Đánh giá: chỉ xem + Xóa -----
   async function renderReviewsTable() {
     const tbody = document.getElementById('reviewsTbody');
+    const countSummaryEl = document.getElementById('reviewsCountSummary');
     if (!tbody) return;
     try {
       tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;">Đang tải...</td></tr>';
       const [list, users] = await Promise.all([getReviews(), getUsersList().catch(() => [])]);
+      if (countSummaryEl) countSummaryEl.textContent = `Tổng số đánh giá: ${Array.isArray(list) ? list.length : 0}`;
       const userNameByUid = new Map(
         (Array.isArray(users) ? users : [])
           .filter(u => u && u.uid)
@@ -679,6 +828,7 @@ function initAdmin() {
       });
     } catch (err) {
       console.error('renderReviewsTable:', err);
+      if (countSummaryEl) countSummaryEl.textContent = 'Tổng số đánh giá: 0';
       tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#c00;">Lỗi tải dữ liệu</td></tr>';
     }
   }
@@ -697,6 +847,8 @@ function initAdmin() {
   async function renderOrdersTable(ordersList) {
     const tbody = document.getElementById('ordersTbody');
     const filterSelect = document.getElementById('ordersFilterStatus');
+    const periodSelect = document.getElementById('ordersFilterPeriod');
+    const countSummaryEl = document.getElementById('ordersCountSummary');
     if (!tbody) return;
     try {
       let list;
@@ -709,8 +861,36 @@ function initAdmin() {
       list = list.sort((a, b) => new Date(b.order_date || b.created_at || 0) - new Date(a.order_date || a.created_at || 0));
       const statusFilter = filterSelect ? filterSelect.value : '';
       if (statusFilter) list = list.filter(o => (o.status || 'pending') === statusFilter);
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const period = periodSelect ? periodSelect.value : 'all';
+      if (period && period !== 'all') {
+        let startDate = null;
+        let endDate = new Date(now);
+        if (period === 'today') {
+          startDate = todayStart;
+        } else if (period === '7') {
+          startDate = new Date(todayStart);
+          startDate.setDate(startDate.getDate() - 7);
+        } else if (period === '30') {
+          startDate = new Date(todayStart);
+          startDate.setDate(startDate.getDate() - 30);
+        } else if (period === 'custom' && ordersCustomRangeStart && ordersCustomRangeEnd) {
+          startDate = new Date(ordersCustomRangeStart + 'T00:00:00');
+          endDate = new Date(ordersCustomRangeEnd + 'T23:59:59.999');
+        }
+        if (startDate) {
+          const startTime = startDate.getTime();
+          const endTime = endDate.getTime();
+          list = list.filter(o => {
+            const t = new Date(o.order_date || o.created_at || 0).getTime();
+            return t >= startTime && t <= endTime;
+          });
+        }
+      }
       currentOrdersList = Array.isArray(list) ? list : [];
       cachedOrders = currentOrdersList;
+      if (countSummaryEl) countSummaryEl.textContent = `Tổng số đơn: ${currentOrdersList.length}`;
       tbody.innerHTML = '';
       if (list.length === 0) {
         tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#888;">Chưa có đơn hàng</td></tr>';
@@ -948,7 +1128,47 @@ function initAdmin() {
     } catch (err) {
       console.error('renderOrdersTable:', err);
       tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#c00;">Lỗi tải dữ liệu</td></tr>';
+      if (countSummaryEl) countSummaryEl.textContent = 'Tổng số đơn: 0';
     }
+  }
+
+  function openOrdersDateRangeModal() {
+    const now = new Date();
+    const defaultTo = ordersCustomRangeEnd || fmtDateForInput(now);
+    const defaultFromDate = ordersCustomRangeStart ? new Date(ordersCustomRangeStart + 'T00:00:00') : new Date(now.getTime() - 29 * 24 * 60 * 60 * 1000);
+    const defaultFrom = fmtDateForInput(defaultFromDate);
+    const body = `
+      <div class="admin-form-group">
+        <label for="ordersDateFrom">Từ ngày</label>
+        <input type="date" id="ordersDateFrom" value="${defaultFrom}" />
+      </div>
+      <div class="admin-form-group">
+        <label for="ordersDateTo">Đến ngày</label>
+        <input type="date" id="ordersDateTo" value="${defaultTo}" />
+      </div>
+    `;
+    const footer = `
+      <button type="button" class="btn btn-outline" id="ordersDateCancel">Hủy</button>
+      <button type="button" class="btn btn-primary" id="ordersDateApply">Áp dụng</button>
+    `;
+    openModal('Lọc đơn theo ngày', body, footer);
+    document.getElementById('ordersDateCancel')?.addEventListener('click', () => {
+      const select = document.getElementById('ordersFilterPeriod');
+      if (select) select.value = lastOrdersPeriod;
+      closeModal();
+    });
+    document.getElementById('ordersDateApply')?.addEventListener('click', () => {
+      const from = document.getElementById('ordersDateFrom')?.value;
+      const to = document.getElementById('ordersDateTo')?.value;
+      if (!from || !to) return alert('Vui lòng chọn đủ Từ ngày và Đến ngày.');
+      if (from > to) return alert('Từ ngày phải nhỏ hơn hoặc bằng Đến ngày.');
+      ordersCustomRangeStart = from;
+      ordersCustomRangeEnd = to;
+      lastOrdersPeriod = 'custom';
+      closeModal();
+      ordersCurrentPage = 1;
+      renderOrdersTable();
+    });
   }
 
   function openCancelOrderModal(orderId) {
@@ -988,6 +1208,7 @@ function initAdmin() {
   // Render bảng món ăn từ Firebase
   async function renderFoodsTable(productsList) {
     const tbody = document.querySelector('#foods .admin-table tbody');
+    const foodsCountEl = document.getElementById('foodsCountSummary');
     if (!tbody) return;
     try {
       let products;
@@ -997,8 +1218,19 @@ function initAdmin() {
         tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#888;">Đang tải...</td></tr>';
         await loadCategoriesIfNeeded();
         products = await getProducts();
+        const searchEl = document.getElementById('foodsSearchInput');
+        const query = (searchEl?.value || '').trim().toLowerCase();
+        if (query) {
+          products = products.filter(p => String(p.product_name || '').toLowerCase().includes(query));
+        }
+        const categoryEl = document.getElementById('foodsFilterCategory');
+        const categoryId = categoryEl?.value || '';
+        if (categoryId) {
+          products = products.filter(p => String(p.category_id || '') === String(categoryId));
+        }
       }
       currentFoodsList = Array.isArray(products) ? products : [];
+      if (foodsCountEl) foodsCountEl.textContent = `Tổng số món: ${currentFoodsList.length}`;
       tbody.innerHTML = '';
       if (products.length === 0) {
         tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#888;">Chưa có món ăn</td></tr>';
@@ -1080,6 +1312,7 @@ function initAdmin() {
       }
     } catch (err) {
       console.error('renderFoodsTable:', err);
+      if (foodsCountEl) foodsCountEl.textContent = 'Tổng số món: 0';
       const tbody = document.querySelector('#foods .admin-table tbody');
       if (tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#c00;">Lỗi tải dữ liệu: ' + (err.message || err) + '</td></tr>';
     }
@@ -1307,6 +1540,19 @@ function initAdmin() {
 
   const ordersFilterStatus = document.getElementById('ordersFilterStatus');
   if (ordersFilterStatus) ordersFilterStatus.addEventListener('change', () => { ordersCurrentPage = 1; renderOrdersTable(); });
+  const ordersFilterPeriod = document.getElementById('ordersFilterPeriod');
+  if (ordersFilterPeriod) {
+    ordersFilterPeriod.addEventListener('change', (e) => {
+      const value = e.target.value;
+      if (value === 'custom') {
+        openOrdersDateRangeModal();
+        return;
+      }
+      lastOrdersPeriod = value;
+      ordersCurrentPage = 1;
+      renderOrdersTable();
+    });
+  }
   // Realtime: tự cập nhật bảng đơn khi Firebase thay đổi (bếp đổi trạng thái, admin khác thao tác...)
   subscribeOrders((list) => renderOrdersTable(list));
 
@@ -1368,6 +1614,22 @@ function initAdmin() {
   }
 
   // --- Thêm món ăn ---
+  const foodsSearchInput = document.getElementById('foodsSearchInput');
+  if (foodsSearchInput) {
+    foodsSearchInput.addEventListener('input', () => {
+      foodsCurrentPage = 1;
+      renderFoodsTable();
+    });
+  }
+
+  const foodsFilterCategory = document.getElementById('foodsFilterCategory');
+  if (foodsFilterCategory) {
+    foodsFilterCategory.addEventListener('change', () => {
+      foodsCurrentPage = 1;
+      renderFoodsTable();
+    });
+  }
+
   const btnAddFood = document.getElementById('btnAddFood');
   if (btnAddFood) {
     btnAddFood.addEventListener('click', async () => {

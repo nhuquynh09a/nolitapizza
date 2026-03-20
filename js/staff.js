@@ -10,6 +10,33 @@ const $ = (s) => document.querySelector(s);
 const $$ = (s) => document.querySelectorAll(s);
 
 let currentUser = null;
+let currentKitchenCompletedPeriod = 'all';
+let currentShipperCompletedPeriod = 'all';
+
+function getPeriodRange(period) {
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if (period === 'today') {
+    return { start: todayStart.getTime(), end: now.getTime() };
+  }
+  if (period === 'yesterday') {
+    const yesterdayStart = new Date(todayStart);
+    yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+    const yesterdayEnd = new Date(todayStart.getTime() - 1);
+    return { start: yesterdayStart.getTime(), end: yesterdayEnd.getTime() };
+  }
+  if (period === '7') {
+    const start = new Date(todayStart);
+    start.setDate(start.getDate() - 7);
+    return { start: start.getTime(), end: now.getTime() };
+  }
+  if (period === '30') {
+    const start = new Date(todayStart);
+    start.setDate(start.getDate() - 30);
+    return { start: start.getTime(), end: now.getTime() };
+  }
+  return null;
+}
 
 function showToast(message, type = 'success') {
   const el = document.getElementById('kitchenToast');
@@ -149,6 +176,8 @@ function renderOrderCards(orders) {
 function renderCompletedOrders(orders) {
   const container = document.getElementById('kitchenCompletedCards');
   const empty = document.getElementById('kitchenCompletedEmpty');
+  const periodSelect = document.getElementById('kitchenCompletedPeriod');
+  const countSummaryEl = document.getElementById('kitchenCompletedCountSummary');
   if (!container || !empty) return;
   const doneOrders = orders.filter((o) => {
     const status = (o.status || '').toLowerCase();
@@ -157,13 +186,24 @@ function renderCompletedOrders(orders) {
     // bất kể admin đã gửi ship hay đơn đã completed, miễn là không bị hủy.
     return kitchenStatus === 'done' && status !== 'cancelled';
   });
-  empty.style.display = doneOrders.length === 0 ? 'flex' : 'none';
-  container.style.display = doneOrders.length === 0 ? 'none' : 'grid';
-  if (doneOrders.length === 0) {
+  const selectedPeriod = periodSelect ? periodSelect.value : currentKitchenCompletedPeriod;
+  currentKitchenCompletedPeriod = selectedPeriod || 'all';
+  const range = getPeriodRange(currentKitchenCompletedPeriod);
+  const filteredDoneOrders = range
+    ? doneOrders.filter((o) => {
+        const t = new Date(o.completed_at || o.order_date || o.created_at || 0).getTime();
+        return t >= range.start && t <= range.end;
+      })
+    : doneOrders;
+
+  if (countSummaryEl) countSummaryEl.textContent = `Tổng số đơn hoàn thành: ${filteredDoneOrders.length}`;
+  empty.style.display = filteredDoneOrders.length === 0 ? 'flex' : 'none';
+  container.style.display = filteredDoneOrders.length === 0 ? 'none' : 'grid';
+  if (filteredDoneOrders.length === 0) {
     container.innerHTML = '';
     return;
   }
-  container.innerHTML = doneOrders
+  container.innerHTML = filteredDoneOrders
     .map((o, index) => {
       const id = o.id || '';
       const dateStr = formatDate(o.order_date || o.created_at);
@@ -305,6 +345,8 @@ function renderShipperOrders(orders) {
 function renderShipperCompletedOrders(orders) {
   const container = document.getElementById('kitchenCompletedCards');
   const empty = document.getElementById('kitchenCompletedEmpty');
+  const periodSelect = document.getElementById('shipperCompletedPeriod');
+  const countSummaryEl = document.getElementById('shipperCompletedCountSummary');
   if (!container || !empty) return;
 
   const doneOrders = orders.filter((o) => {
@@ -313,14 +355,25 @@ function renderShipperCompletedOrders(orders) {
     return status === 'completed' || shippingStatus === 'delivered';
   });
 
-  empty.style.display = doneOrders.length === 0 ? 'flex' : 'none';
-  container.style.display = doneOrders.length === 0 ? 'none' : 'grid';
-  if (doneOrders.length === 0) {
+  const selectedPeriod = periodSelect ? periodSelect.value : currentShipperCompletedPeriod;
+  currentShipperCompletedPeriod = selectedPeriod || 'all';
+  const range = getPeriodRange(currentShipperCompletedPeriod);
+  const filteredDoneOrders = range
+    ? doneOrders.filter((o) => {
+        const t = new Date(o.completed_at || o.order_date || o.created_at || 0).getTime();
+        return t >= range.start && t <= range.end;
+      })
+    : doneOrders;
+
+  if (countSummaryEl) countSummaryEl.textContent = `Tổng số đơn đã giao xong: ${filteredDoneOrders.length}`;
+  empty.style.display = filteredDoneOrders.length === 0 ? 'flex' : 'none';
+  container.style.display = filteredDoneOrders.length === 0 ? 'none' : 'grid';
+  if (filteredDoneOrders.length === 0) {
     container.innerHTML = '';
     return;
   }
 
-  container.innerHTML = doneOrders
+  container.innerHTML = filteredDoneOrders
     .map((o, index) => {
       const id = o.id || '';
       const dateStr = formatDate(o.completed_at || o.order_date || o.created_at);
@@ -596,6 +649,10 @@ function initKitchen() {
       }
     });
   });
+  document.getElementById('kitchenCompletedPeriod')?.addEventListener('change', (e) => {
+    currentKitchenCompletedPeriod = e.target.value || 'all';
+    loadOrders();
+  });
   loadOrders();
   // Realtime: tự cập nhật danh sách đơn khi Firebase thay đổi (admin gửi bếp, đổi trạng thái...)
   subscribeOrders((list) => loadOrders(list));
@@ -640,6 +697,10 @@ function initShipper() {
         showToast('Lỗi đăng xuất.', 'error');
       }
     });
+  });
+  document.getElementById('shipperCompletedPeriod')?.addEventListener('change', (e) => {
+    currentShipperCompletedPeriod = e.target.value || 'all';
+    loadShipperOrders();
   });
   loadShipperOrders();
   // Realtime: tự cập nhật danh sách đơn giao khi Firebase thay đổi (admin gửi ship, shipper cập nhật...)

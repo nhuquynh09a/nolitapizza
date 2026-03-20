@@ -91,6 +91,7 @@
             <option value="today">Hôm nay</option>
             <option value="7">7 ngày qua</option>
             <option value="30">30 ngày qua</option>
+            <option value="custom">Tùy chọn ngày</option>
           </select>
         </div>
       </header>
@@ -109,6 +110,21 @@
           <article class="admin-card admin-card--stat">
             <p class="admin-card-label">Món ăn mới</p>
             <p class="admin-card-value" id="dashboardNewProducts">—</p>
+          </article>
+        </div>
+
+        <div class="admin-analytics-charts" style="margin-top: 20px;">
+          <article class="admin-card admin-card--chart">
+            <h3 class="admin-card-heading">Khung giờ tiêu thụ (08:00 - 21:00)</h3>
+            <div class="admin-chart-placeholder admin-chart-placeholder--large" id="dashboardHourlyConsumptionChart">
+              Biểu đồ cột số lượng tiêu thụ theo giờ sẽ hiển thị ở đây.
+            </div>
+          </article>
+          <article class="admin-card admin-card--chart">
+            <h3 class="admin-card-heading">Món bán chạy</h3>
+            <div class="admin-chart-placeholder admin-chart-placeholder--large" id="dashboardTopSellingPieChart">
+              Biểu đồ tròn món bán chạy sẽ hiển thị ở đây.
+            </div>
           </article>
         </div>
       </section>
@@ -177,6 +193,14 @@
               <option value="completed">Hoàn thành</option>
               <option value="cancelled">Đã hủy</option>
             </select>
+            <select class="admin-select admin-select--sm" id="ordersFilterPeriod">
+              <option value="all">Tất cả thời gian</option>
+              <option value="today">Hôm nay</option>
+              <option value="7">7 ngày qua</option>
+              <option value="30">30 ngày qua</option>
+              <option value="custom">Tùy chọn ngày</option>
+            </select>
+            <span id="ordersCountSummary" class="admin-pagination-info">Tổng số đơn: 0</span>
           </div>
           <div class="admin-table-scroll">
             <table class="admin-table">
@@ -212,10 +236,11 @@
 
         <div class="admin-card admin-card--table">
           <div class="admin-table-toolbar">
-            <input type="text" class="admin-input" placeholder="Tìm tên món..." />
-            <select class="admin-select admin-select--sm">
+            <input type="text" class="admin-input" id="foodsSearchInput" placeholder="Tìm tên món..." />
+            <select class="admin-select admin-select--sm" id="foodsFilterCategory">
               <option value="">Tất cả danh mục</option>
             </select>
+            <span id="foodsCountSummary" class="admin-pagination-info">Tổng số món: 0</span>
           </div>
           <div class="admin-table-scroll">
             <table class="admin-table">
@@ -245,8 +270,8 @@
         <div class="admin-section-header">
           <div>
             <h2 class="admin-section-title">Danh sách liên hệ</h2>
-            <p class="admin-section-subtitle">
-              Tin nhắn liên hệ từ khách hàng. Xem chi tiết hoặc xóa.
+            <p class="admin-header-subtitle" style="margin-top:6px;">
+              <span id="contactsCountSummary">Tổng số liên hệ: 0</span>
             </p>
           </div>
         </div>
@@ -274,7 +299,9 @@
         <div class="admin-section-header">
           <div>
             <h2 class="admin-section-title">Quản lý đánh giá</h2>
-            
+            <p class="admin-header-subtitle" style="margin-top:6px;">
+              <span id="reviewsCountSummary">Tổng số đánh giá: 0</span>
+            </p>
           </div>
         </div>
         <div class="admin-card admin-card--table">

@@ -59,6 +59,16 @@
       </section>
 
       <section class="kitchen-section" id="completed" style="display:none;">
+        <div class="admin-table-toolbar" style="margin-bottom: 12px;">
+          <select class="admin-select admin-select--sm" id="kitchenCompletedPeriod">
+            <option value="all">Tất cả thời gian</option>
+            <option value="today">Hôm nay</option>
+            <option value="yesterday">Hôm qua</option>
+            <option value="7">7 ngày qua</option>
+            <option value="30">30 ngày qua</option>
+          </select>
+          <span id="kitchenCompletedCountSummary" class="admin-pagination-info">Tổng số đơn hoàn thành: 0</span>
+        </div>
         <div id="kitchenCompletedEmpty" class="kitchen-empty" style="display:none;">
           <i class="fas fa-clipboard-check"></i>
           <p>Chưa có đơn nào hoàn thành.</p>

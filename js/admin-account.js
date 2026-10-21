@@ -1,5 +1,5 @@
 // Admin dashboard – navigation + modal Thêm người dùng / món ăn / danh mục
-import { auth, onAuthStateChanged, getUserProfile, addProduct, setProductDetails, getProducts, getCategories, addCategory, updateCategory, deleteCategory, getProductById, getProductDetailsByProductId, updateProduct, deleteProduct, getUsersList, saveUserProfile, deleteUserProfile, getContacts, updateContact, deleteContact, getReviews, deleteReview, getOrders, subscribeOrders, updateOrder, logout } from './firebase.js';
+import { auth, onAuthStateChanged, getUserProfile, addProduct, setProductDetails, getProducts, getCategories, addCategory, updateCategory, deleteCategory, getProductById, getProductDetailsByProductId, updateProduct, deleteProduct, getUsersList, deleteUserProfile, getContacts, updateContact, deleteContact, getReviews, deleteReview, getOrders, subscribeOrders, updateOrder, logout } from './firebase.js';
 
 const CLOUDINARY_CLOUD_NAME = 'durrqkh9f';
 // Bắt buộc tạo preset trong Cloudinary (nếu chưa có):
@@ -79,6 +79,20 @@ function initAdmin() {
     sections.forEach(sec => {
       sec.style.display = sec.id === id ? 'block' : 'none';
     });
+  }
+
+  function showAdminNotice(title, message) {
+    const body = `
+      <div class="admin-notice">
+        <span class="admin-notice-icon" aria-hidden="true">✓</span>
+        <p id="adminNoticeMessage"></p>
+      </div>
+    `;
+    const footer = '<button type="button" class="btn btn-primary" id="adminNoticeClose">Đóng</button>';
+    openModal(title, body, footer);
+    backdrop.classList.add('admin-modal-backdrop--notice');
+    document.getElementById('adminNoticeMessage').textContent = message;
+    document.getElementById('adminNoticeClose').addEventListener('click', closeModal);
   }
 
   showSection('dashboard');
@@ -493,8 +507,8 @@ function initAdmin() {
         await loadCategoriesIfNeeded(true);
         renderCategoriesTable();
         renderFoodsCategoryFilter();
-        alert('Đã cập nhật danh mục.');
         closeModal();
+        showAdminNotice('Thành công', 'Danh mục đã được cập nhật thành công.');
       } catch (err) {
         console.error('Sửa danh mục:', err);
         alert('Lỗi khi lưu: ' + (err?.message || err));
@@ -513,13 +527,15 @@ function initAdmin() {
     }
   }
 
-  // ----- Người dùng: load từ Firebase, Sửa / Xóa -----
-  async function renderUsersTable() {
+  // ----- Người dùng: load từ Firebase, Xóa -----
+  async function renderUsersTable(usersList) {
     const tbody = document.getElementById('usersTbody');
+    const searchInput = document.getElementById('usersSearchInput');
+    const roleFilter = document.getElementById('usersFilterRole');
     if (!tbody) return;
     try {
       tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;">Đang tải...</td></tr>';
-      const users = await getUsersList();
+      const users = Array.isArray(usersList) ? usersList : await getUsersList();
       currentUsersList = Array.isArray(users) ? users : [];
       tbody.innerHTML = '';
       if (currentUsersList.length === 0) {
@@ -528,9 +544,24 @@ function initAdmin() {
         if (paginationEl) paginationEl.innerHTML = '';
         return;
       }
-      const totalPagesUsers = Math.ceil(currentUsersList.length / ADMIN_PAGE_SIZE);
+      const searchTerm = searchInput ? searchInput.value.trim().toLocaleLowerCase() : '';
+      const selectedRole = roleFilter ? roleFilter.value.toLocaleLowerCase() : '';
+      const filteredUsers = currentUsersList.filter(user => {
+        const matchesSearch = !searchTerm ||
+          String(user.full_name || '').toLocaleLowerCase().includes(searchTerm) ||
+          String(user.email || '').toLocaleLowerCase().includes(searchTerm);
+        const matchesRole = !selectedRole || String(user.role || 'user').toLocaleLowerCase() === selectedRole;
+        return matchesSearch && matchesRole;
+      });
+      if (filteredUsers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#888;">Không tìm thấy người dùng phù hợp</td></tr>';
+        const paginationEl = document.getElementById('usersPagination');
+        if (paginationEl) paginationEl.innerHTML = '';
+        return;
+      }
+      const totalPagesUsers = Math.ceil(filteredUsers.length / ADMIN_PAGE_SIZE);
       usersCurrentPage = Math.max(1, Math.min(usersCurrentPage, totalPagesUsers));
-      const pageList = currentUsersList.slice((usersCurrentPage - 1) * ADMIN_PAGE_SIZE, usersCurrentPage * ADMIN_PAGE_SIZE);
+      const pageList = filteredUsers.slice((usersCurrentPage - 1) * ADMIN_PAGE_SIZE, usersCurrentPage * ADMIN_PAGE_SIZE);
 
       pageList.forEach(u => {
         const tr = document.createElement('tr');
@@ -545,14 +576,10 @@ function initAdmin() {
           <td>${role}</td>
           <td>${created}</td>
           <td class="admin-food-actions">
-            <button type="button" class="btn btn-sm admin-btn-edit btn-edit-user" data-uid="${u.uid}">Sửa</button>
             <button type="button" class="btn btn-sm admin-btn-delete btn-delete-user" data-uid="${u.uid}">Xóa</button>
           </td>
         `;
         tbody.appendChild(tr);
-      });
-      tbody.querySelectorAll('.btn-edit-user').forEach(btn => {
-        btn.addEventListener('click', () => openEditUserModal(btn.getAttribute('data-uid')));
       });
       tbody.querySelectorAll('.btn-delete-user').forEach(btn => {
         btn.addEventListener('click', async () => {
@@ -581,10 +608,10 @@ function initAdmin() {
             </div>
           `;
           paginationEl.querySelector('.admin-pagination-prev')?.addEventListener('click', () => {
-            if (usersCurrentPage > 1) { usersCurrentPage--; renderUsersTable(); }
+            if (usersCurrentPage > 1) { usersCurrentPage--; renderUsersTable(currentUsersList); }
           });
           paginationEl.querySelector('.admin-pagination-next')?.addEventListener('click', () => {
-            if (usersCurrentPage < totalPagesUsers) { usersCurrentPage++; renderUsersTable(); }
+            if (usersCurrentPage < totalPagesUsers) { usersCurrentPage++; renderUsersTable(currentUsersList); }
           });
         }
       }
@@ -601,59 +628,6 @@ function initAdmin() {
       const paginationEl = document.getElementById('usersPagination');
       if (paginationEl) paginationEl.innerHTML = '';
     }
-  }
-
-  async function openEditUserModal(uid) {
-    let list;
-    try {
-      list = await getUsersList();
-    } catch (e) {
-      alert('Không tải được danh sách user: ' + (e?.message || e));
-      return;
-    }
-    const u = list.find(x => x.uid === uid);
-    if (!u) return alert('Không tìm thấy user.');
-    const body = `
-      <div class="admin-form-group">
-        <label>Email</label>
-        <input type="email" id="modalUserEmail" value="${(u.email || '').replace(/"/g, '&quot;')}" />
-      </div>
-      <div class="admin-form-group">
-        <label>Họ tên</label>
-        <input type="text" id="modalUserFullName" value="${(u.full_name || '').replace(/"/g, '&quot;')}" placeholder="Họ tên" />
-      </div>
-      <div class="admin-form-group">
-        <label>Role</label>
-        <select id="modalUserRole">
-          <option value="user" ${(u.role || '') === 'user' ? 'selected' : ''}>User</option>
-          <option value="admin" ${(u.role || '') === 'admin' ? 'selected' : ''}>Admin</option>
-          <option value="kitchen" ${(u.role || '') === 'kitchen' ? 'selected' : ''}>Kitchen</option>
-        </select>
-      </div>
-    `;
-    const footer = `
-      <button type="button" class="btn btn-outline" id="modalUserCancel">Hủy</button>
-      <button type="button" class="btn btn-primary" id="modalUserSave">Lưu</button>
-    `;
-    openModal('Sửa người dùng', body, footer);
-    document.getElementById('modalUserCancel').addEventListener('click', closeModal);
-    document.getElementById('modalUserSave').addEventListener('click', async () => {
-      const email = document.getElementById('modalUserEmail').value.trim();
-      const full_name = document.getElementById('modalUserFullName').value.trim();
-      const role = document.getElementById('modalUserRole').value || 'user';
-      if (!email || !full_name) {
-        alert('Vui lòng nhập Email và Họ tên.');
-        return;
-      }
-      try {
-        await saveUserProfile(uid, { ...u, email, full_name, role });
-        alert('Đã cập nhật.');
-        closeModal();
-        await renderUsersTable();
-      } catch (err) {
-        alert('Lỗi: ' + (err?.message || err));
-      }
-    });
   }
 
   // ----- Liên hệ: load, Sửa / Xóa -----
@@ -695,15 +669,27 @@ function initAdmin() {
         btn.addEventListener('click', () => openViewContactModal(btn.getAttribute('data-id')));
       });
       tbody.querySelectorAll('.btn-delete-contact').forEach(btn => {
-        btn.addEventListener('click', async () => {
+        btn.addEventListener('click', () => {
           const id = btn.getAttribute('data-id');
-          if (!id || !confirm('Xóa liên hệ này?')) return;
-          try {
-            await deleteContact(id);
-            await renderContactsTable();
-          } catch (err) {
-            alert('Lỗi: ' + (err?.message || err));
-          }
+          if (!id) return;
+          const body = '<p style="margin:0;color:#eee;">Bạn có chắc muốn xóa liên hệ này? Thao tác này không thể hoàn tác.</p>';
+          const footer = `
+            <button type="button" class="btn btn-outline" id="modalContactDeleteCancel">Hủy</button>
+            <button type="button" class="btn btn-primary" id="modalContactDeleteConfirm" style="background:#c62828;">Xóa liên hệ</button>
+          `;
+          openModal('Xóa liên hệ', body, footer);
+          document.getElementById('modalContactDeleteCancel').addEventListener('click', closeModal);
+          document.getElementById('modalContactDeleteConfirm').addEventListener('click', async () => {
+            try {
+              await deleteContact(id);
+              closeModal();
+              await renderContactsTable();
+            } catch (err) {
+              console.error('Xóa liên hệ:', err);
+              closeModal();
+              showAdminToast('Không thể xóa liên hệ: ' + (err?.message || err), 'error');
+            }
+          });
         });
       });
     } catch (err) {
@@ -848,6 +834,7 @@ function initAdmin() {
     const tbody = document.getElementById('ordersTbody');
     const filterSelect = document.getElementById('ordersFilterStatus');
     const periodSelect = document.getElementById('ordersFilterPeriod');
+    const searchInput = document.getElementById('ordersSearchInput');
     const countSummaryEl = document.getElementById('ordersCountSummary');
     if (!tbody) return;
     try {
@@ -859,6 +846,13 @@ function initAdmin() {
         list = await getOrders();
       }
       list = list.sort((a, b) => new Date(b.order_date || b.created_at || 0) - new Date(a.order_date || a.created_at || 0));
+      const searchTerm = searchInput ? searchInput.value.trim().toLocaleLowerCase() : '';
+      if (searchTerm) {
+        list = list.filter(order =>
+          String(order.id ?? '').toLocaleLowerCase().includes(searchTerm) ||
+          String(order.customer_name ?? '').toLocaleLowerCase().includes(searchTerm)
+        );
+      }
       const statusFilter = filterSelect ? filterSelect.value : '';
       if (statusFilter) list = list.filter(o => (o.status || 'pending') === statusFilter);
       const now = new Date();
@@ -893,7 +887,7 @@ function initAdmin() {
       if (countSummaryEl) countSummaryEl.textContent = `Tổng số đơn: ${currentOrdersList.length}`;
       tbody.innerHTML = '';
       if (list.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#888;">Chưa có đơn hàng</td></tr>';
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#888;">${searchTerm ? 'Không tìm thấy đơn hàng phù hợp' : 'Chưa có đơn hàng'}</td></tr>`;
         document.getElementById('ordersPagination').innerHTML = '';
         return;
       }
@@ -1538,8 +1532,21 @@ function initAdmin() {
     });
   });
 
+  const usersSearchInput = document.getElementById('usersSearchInput');
+  if (usersSearchInput) usersSearchInput.addEventListener('input', () => {
+    usersCurrentPage = 1;
+    renderUsersTable(currentUsersList);
+  });
+  const usersFilterRole = document.getElementById('usersFilterRole');
+  if (usersFilterRole) usersFilterRole.addEventListener('change', () => {
+    usersCurrentPage = 1;
+    renderUsersTable(currentUsersList);
+  });
+
   const ordersFilterStatus = document.getElementById('ordersFilterStatus');
   if (ordersFilterStatus) ordersFilterStatus.addEventListener('change', () => { ordersCurrentPage = 1; renderOrdersTable(); });
+  const ordersSearchInput = document.getElementById('ordersSearchInput');
+  if (ordersSearchInput) ordersSearchInput.addEventListener('input', () => { ordersCurrentPage = 1; renderOrdersTable(); });
   const ordersFilterPeriod = document.getElementById('ordersFilterPeriod');
   if (ordersFilterPeriod) {
     ordersFilterPeriod.addEventListener('change', (e) => {
@@ -1580,6 +1587,7 @@ function initAdmin() {
 
   // --- Modal ---
   function openModal(title, bodyHtml, footerHtml) {
+    backdrop.classList.remove('admin-modal-backdrop--notice');
     modalTitle.textContent = title;
     modalBody.innerHTML = bodyHtml || '';
     modalFooter.innerHTML = footerHtml || '';
@@ -1825,8 +1833,8 @@ function initAdmin() {
           await loadCategoriesIfNeeded(true);
           renderCategoriesTable();
           renderFoodsCategoryFilter();
-          alert('Đã lưu danh mục lên Firebase.');
           closeModal();
+          showAdminNotice('Thành công', 'Danh mục đã được lưu thành công.');
         } catch (err) {
           console.error('Lưu danh mục:', err);
           alert('Lỗi khi lưu danh mục: ' + (err.message || err));

@@ -143,8 +143,8 @@
 
         <div class="admin-card admin-card--table">
           <div class="admin-table-toolbar">
-            <input type="text" class="admin-input" placeholder="Tìm theo tên hoặc email..." />
-            <select class="admin-select admin-select--sm">
+            <input type="text" class="admin-input" id="usersSearchInput" placeholder="Tìm theo tên hoặc email..." />
+            <select class="admin-select admin-select--sm" id="usersFilterRole">
               <option value="">Tất cả role</option>
               <option value="user">User</option>
               <option value="admin">Admin</option>
@@ -183,7 +183,7 @@
 
         <div class="admin-card admin-card--table">
           <div class="admin-table-toolbar">
-            <input type="text" class="admin-input" placeholder="Tìm đơn theo mã hoặc tên khách..." />
+            <input type="text" class="admin-input" id="ordersSearchInput" placeholder="Tìm đơn theo mã hoặc tên khách..." />
             <select class="admin-select admin-select--sm" id="ordersFilterStatus">
               <option value="">Tất cả trạng thái</option>
               <option value="pending">Chờ xác nhận</option>
